@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RVCS Complaint Process</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a2744;
+    --navy-light: #243560;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f8f5ee;
+    --cream-dark: #ede8de;
+    --text: #2a2a2a;
+    --text-muted: #666;
+    --red: #c0392b;
+    --green: #2e7d52;
+    --white: #ffffff;
+    --shadow: 0 4px 24px rgba(26,39,68,0.10);
+    --shadow-lg: 0 12px 48px rgba(26,39,68,0.16);
+    --radius: 12px;
+    --transition: 0.28s cubic-bezier(.4,0,.2,1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 36px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 40px,
+      rgba(201,168,76,0.05) 40px,
+      rgba(201,168,76,0.05) 41px
+    );
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 50px;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.68);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ---- POLICY NOTE ---- */
+  .policy-note {
+    background: var(--navy-light);
+    color: rgba(255,255,255,0.82);
+    font-size: 12.5px;
+    text-align: center;
+    padding: 10px 24px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .policy-note strong { color: var(--gold-light); }
+
+  /* ---- MAIN LAYOUT ---- */
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 36px 20px 60px;
+  }
+
+  /* ---- PROGRESS ---- */
+  .progress-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .progress-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--cream-dark);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* ---- STEP CARD ---- */
+  .step-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: none;
+    animation: fadeSlideIn 0.38s cubic-bezier(.4,0,.2,1) both;
+  }
+  .step-card.active { display: block; }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-card-header {
+    background: var(--navy);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .step-num {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-card-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .step-card-header p {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 2px;
+  }
+
+  .step-body { padding: 28px; }
+
+  /* ---- QUESTION PROMPT ---- */
+  .question-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 20px;
+  }
+
+  /* ---- GUIDANCE BOX ---- */
+  .guidance {
+    background: var(--cream);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .guidance strong { color: var(--navy); }
+  .guidance ul { margin-top: 8px; padding-left: 18px; }
+  .guidance ul li { margin-bottom: 4px; }
+
+  /* ---- ALERT BOXES ---- */
+  .alert {
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alert.alert-warn { background: #fff8e6; border: 1px solid #f5c842; }
+  .alert.alert-info { background: #e8f0fb; border: 1px solid #4a7dd4; }
+  .alert.alert-stop { background: #fdecea; border: 1px solid var(--red); }
+  .alert.alert-success { background: #e8f5ee; border: 1px solid var(--green); }
+
+  /* ---- BUTTONS ---- */
+  .btn-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .btn {
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-primary {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,39,68,0.25); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--navy);
+    border: 2px solid var(--cream-dark);
+  }
+  .btn-secondary:hover { border-color: var(--navy); background: var(--cream); }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(201,168,76,0.4); }
+  .btn-danger {
+    background: var(--red);
+    color: var(--white);
+  }
+  .btn-danger:hover { background: #a93226; }
+
+  /* ---- OUTCOME CARD ---- */
+  .outcome-card {
+    border-radius: var(--radius);
+    padding: 28px;
+    text-align: center;
+    display: none;
+    animation: fadeSlideIn 0.38s ease both;
+  }
+  .outcome-card.active { display: block; }
+  .outcome-card .outcome-icon { font-size: 48px; margin-bottom: 14px; }
+  .outcome-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .outcome-card p { font-size: 14px; line-height: 1.7; color: var(--text-muted); max-width: 500px; margin: 0 auto 20px; }
+  .outcome-card.outcome-stop { background: #fdecea; border: 2px solid var(--red); }
+  .outcome-card.outcome-stop h3 { color: var(--red); }
+  .outcome-card.outcome-go { background: var(--white); box-shadow: var(--shadow); border: 2px solid var(--gold); }
+  .outcome-card.outcome-go h3 { color: var(--navy); }
+  .outcome-card.outcome-next { background: var(--white); box-shadow: var(--shadow); }
+
+  /* ---- STEP TIMELINE (summary) ---- */
+  .timeline {
+    margin: 20px 0 0;
+    text-align: left;
+  }
+  .timeline-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cream-dark);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .tl-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .tl-done .tl-num { background: var(--green); }
+  .tl-active .tl-num { background: var(--gold); color: var(--navy); }
+  .tl-title { font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+  .tl-desc { color: var(--text-muted); }
+
+  /* ---- RESTART ---- */
+  .restart-wrap { text-align: center; margin-top: 24px; }
+  .restart-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .restart-btn:hover { color: var(--navy); }
+
+  /* ---- CHECKLIST ---- */
+  .checklist { list-style: none; margin: 12px 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .checklist li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--cream-dark);
+  }
+
+  @media (max-width: 480px) {
+    .btn-group { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+    .step-body { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Official Policy Guide</div>
+  <h1>River Valley Charter School<br>Complaint Process</h1>
+  <p>This guide will help you determine the correct next step in filing a complaint and ensure your case follows the required process.</p>
+</header>
+<div class="policy-note">Based on <strong>RVCS Complaint Policy (Revised May 2015)</strong> — complaints should be resolved as close to their source as possible.</div>
+
+<main>
+
+  <div class="progress-header">
+    <span class="progress-label" id="progressLabel">Step 1 of 6</span>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 0: START -->
+  <!-- ============================================================ -->
+  <div class="step-card active" id="screen-0">
+    <div class="step-card-header">
+      <div class="step-num">?</div>
+      <div>
+        <h2>Before You Begin</h2>
+        <p>Let's find the right path for your complaint</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="guidance">
+        The RVCS Complaint Policy requires that <strong>all complaints be resolved as close to their source as possible</strong>. You must attempt direct resolution before escalating to higher levels. This guide will walk you through each required step.
+      </div>
+      <p class="question-text">What is the nature of your complaint?</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="go('screen-1')">📚 Related to a student / classroom / teacher</button>
+        <button class="btn btn-primary" onclick="go('screen-1')">🏫 School policy or administration</button>
+        <button class="btn btn-primary" onclick="go('screen-employee')">👤 Employment or a staff member</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN: EMPLOYMENT NOTE -->
+  <!-- ============================================================ -->
+  <div class="step-card" id="screen-employee">
+    <div class="step-card-header">
+      <div class="step-num">!</div>
+      <div>
+        <h2>Important: Employment-Related Complaints</h2>
+        <p>Please read before proceeding</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div>The <strong>School Director holds primary responsibility</strong> for the oversight and management of all school staff. The Board of Trustees does not directly manage hiring, firing, or day-to-day employment matters (except for the Director). The Complaint Committee may refer employment issues back to the Director.</div>
+      </div>
+      <p class="question-text">Would you like to continue with the standard complaint process, keeping this in mind?</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="go('screen-1')">Yes, continue with the complaint process</button>
+        <button class="btn btn-secondary" onclick="go('screen-0')">← Go back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 1: Have you spoken to the person directly involved? -->
+  <!-- ============================================================ -->
+  <div class="step-card" id="screen-1">
+    <div class="step-card-header">
+      <div class="step-num">1</div>
+      <div>
+        <h2>Step One: Direct Contact</h2>
+        <p>The first required step in the complaint process</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="guidance">
+        <strong>Policy requirement:</strong> You must first contact those directly involved in the issue. For student concerns, this means speaking with the <strong>head teacher</strong>. Communicate the complaint clearly and identify actions that could lead to resolution.
+      </div>
+      <p class="question-text">Have you already spoken directly with the person involved (e.g., the head teacher or the individual responsible for the issue)?</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="go('screen-1b')">✅ Yes, I have spoken with them</button>
+        <button class="btn btn-secondary" onclick="go('screen-1-action')">❌ No, I have not yet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 1 – Action required (haven't spoken yet) -->
+  <div class="step-card" id="screen-1-action">
+    <div class="step-card-header">
+      <div class="step-num">1</div>
+      <div>
+        <h2>Action Required: Contact Directly</h2>
+        <p>You must complete this step first</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="alert alert-stop">
+        <span class="alert-icon">🛑</span>
+        <div>You <strong>cannot skip Step One</strong>. The policy requires direct communication before escalating. The Complaint Committee will not review a case unless Steps One and Two have been completed.</div>
+      </div>
+      <p class="question-text">Your next action is to contact the person directly involved:</p>
+      <ul class="checklist">
+        <li>For student/classroom concerns — speak with the <strong>head teacher</strong>.</li>
+        <li>Communicate your complaint as clearly as possible.</li>
+        <li>Identify specific actions that would resolve the issue.</li>
+        <li>Work cooperatively toward a resolution.</li>
+        <li>Keep notes of all conversations and dates.</li>
+      </ul>
+      <div class="alert alert-info">
+        <span class="alert-icon">💡</span>
+        <div>Once you have completed Step One, return here to determine your next step.</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-gold" onclick="go('screen-1')">↩ Return after completing Step One</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 1b – Was it resolved? -->
+  <div class="step-card" id="screen-1b">
+    <div class="step-card-header">
+      <div class="step-num">1</div>
+      <div>
+        <h2>Step One: Outcome</h2>
+        <p>Was your complaint resolved through direct contact?</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="question-text">After speaking directly with the person involved, was your complaint resolved to your satisfaction?</p>
+      <div class="btn-group">
+        <button class="btn btn-gold" onclick="go('screen-resolved')">✅ Yes — it was resolved!</button>
+        <button class="btn btn-primary" onclick="go('screen-2')">❌ No — it was not resolved</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 2: Speak with the Director -->
+  <!-- ============================================================ -->
+  <div class="step-card" id="screen-2">
+    <div class="step-card-header">
+      <div class="step-num">2</div>
+      <div>
+        <h2>Step Two: School Director</h2>
+        <p>Escalating to the Director of RVCS</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="guidance">
+        <strong>Policy requirement:</strong> If not resolved in Step One, you must speak with the <strong>Director of River Valley Charter School</strong> and work together to develop a resolution plan. This plan may require review and revision during the process.
+      </div>
+      <p class="question-text">Have you already spoken with the School Director about this complaint?</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="go('screen-2b')">✅ Yes, I have spoken with the Director</button>
+        <button class="btn btn-secondary" onclick="go('screen-2-action')">❌ No, I have not yet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2 – Action required -->
+  <div class="step-card" id="screen-2-action">
+    <div class="step-card-header">
+      <div class="step-num">2</div>
+      <div>
+        <h2>Action Required: Contact the Director</h2>
+        <p>Complete Step Two before proceeding</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="alert alert-stop">
+        <span class="alert-icon">🛑</span>
+        <div>You must speak with the <strong>School Director</strong> before contacting the Board. The Complaint Committee requires documented evidence that Steps One and Two were completed.</div>
+      </div>
+      <p class="question-text">Your next action is to meet with the School Director:</p>
+      <ul class="checklist">
+        <li>Contact the Director to schedule a meeting.</li>
+        <li>Clearly explain the complaint and prior attempts at resolution.</li>
+        <li>Work together to develop a plan to resolve the issue.</li>
+        <li>Allow reasonable time for the plan to be put into effect.</li>
+        <li>Document all meetings, dates, and agreed actions.</li>
+      </ul>
+      <div class="alert alert-info">
+        <span class="alert-icon">💡</span>
+        <div>Return here once you have completed Step Two, or after giving the Director reasonable time to implement a solution.</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-gold" onclick="go('screen-2')">↩ Return after completing Step Two</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2b – Was it resolved? -->
+  <div class="step-card" id="screen-2b">
+    <div class="step-card-header">
+      <div class="step-num">2</div>
+      <div>
+        <h2>Step Two: Outcome</h2>
+        <p>Has the Director resolved your complaint?</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="question-text">Have you given the Director a reasonable amount of time to implement a solution, and is the complaint still unresolved?</p>
+      <div class="btn-group">
+        <button class="btn btn-gold" onclick="go('screen-resolved')">✅ Yes — the Director resolved it!</button>
+        <button class="btn btn-primary" onclick="go('screen-3')">❌ No — still unresolved after reasonable time</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 3: Notify the Board Chair & File Written Report -->
+  <!-- ============================================================ -->
+  <div class="step-card" id="screen-3">
+    <div class="step-card-header">
+      <div class="step-num">3</div>
+      <div>
+        <h2>Step Three: Notify the Board Chair</h2>
+        <p>Filing a formal written complaint</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="guidance">
+        <strong>Policy requirement:</strong> Notify the <strong>Chair of the Board of Trustees</strong> and file a formal written report. Your report <em>must</em> document efforts made to comply with Steps One and Two. All named parties will receive a copy.
+      </div>
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div>Your written report <strong>must clearly document</strong> your Step One and Step Two efforts — without this, the Complaint Committee may return your case to a lower level.</div>
+      </div>
+      <p class="question-text">Your written complaint report should include:</p>
+      <ul class="checklist">
+        <li>A detailed description of the specific complaint.</li>
+        <li>Dates and summary of your Step One direct conversation (with whom, what was discussed, outcome).</li>
+        <li>Dates and summary of your Step Two meeting(s) with the Director (what was agreed, what happened).</li>
+        <li>Why you believe the complaint remains unresolved.</li>
+        <li>What resolution you are seeking.</li>
+      </ul>
+      <div class="alert alert-info">
+        <span class="alert-icon">📋</span>
+        <div>Submit your written report to the <strong>Chair of the Board of Trustees</strong>. Copies will be sent to all parties named in your complaint.</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="go('screen-4')">I have submitted my written report →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 4: Complaint Committee Review -->
+  <!-- ============================================================ -->
+  <div class="step-card" id="screen-4">
+    <div class="step-card-header">
+      <div class="step-num">4</div>
+      <div>
+        <h2>Step Four: Complaint Committee Review</h2>
+        <p>The Board's Complaint Committee will review your case</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="guidance">
+        The Complaint Committee (composed of Board Trustees, including at least one officer) will review your written report. They will provide an <strong>initial response within 10 days</strong> and aim to issue a final report <strong>within 30 days</strong> of receipt.
+      </div>
+      <p class="question-text">What to expect during Step Four:</p>
+      <ul class="checklist">
+        <li>The Committee may return your complaint to the Director level if they believe more can be done there.</li>
+        <li>If Steps One and Two are found to be exhausted, the Committee will schedule meetings with all parties.</li>
+        <li>Meetings aim to gather information, determine points of conflict, and identify solutions.</li>
+        <li>The Committee may schedule a joint mediation meeting with all parties, or issue its own recommendations.</li>
+        <li>A formal written response will be issued at the end of the process.</li>
+      </ul>
+      <div class="alert alert-info">
+        <span class="alert-icon">⏱️</span>
+        <div><strong>Initial response:</strong> within 10 days &nbsp;|&nbsp; <strong>Final report:</strong> within ~30 days (each case may vary).</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="go('screen-5')">The Committee has issued its report →</button>
+        <button class="btn btn-secondary" onclick="go('screen-4-wait')">The Committee returned my case to an earlier step</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4 wait – returned to lower level -->
+  <div class="step-card" id="screen-4-wait">
+    <div class="step-card-header">
+      <div class="step-num">4</div>
+      <div>
+        <h2>Returned to Earlier Step</h2>
+        <p>The Committee needs more done at the Director level</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="alert alert-warn">
+        <span class="alert-icon">↩️</span>
+        <div>The Complaint Committee has determined that more effort can reasonably be made at the <strong>staff or Director level</strong>. Your complaint has been returned for further resolution attempts.</div>
+      </div>
+      <p class="question-text">Next steps:</p>
+      <ul class="checklist">
+        <li>Follow the Committee's specific guidance on what additional steps to take.</li>
+        <li>Re-engage with the Director and document all new efforts.</li>
+        <li>If still unresolved, you may re-submit your written report with updated documentation.</li>
+      </ul>
+      <div class="btn-group">
+        <button class="btn btn-gold" onclick="go('screen-4')">↩ Return to Step Four when ready</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN 5: Step Five / Board Report -->
+  <!-- ============================================================ -->
+  <div class="step-card" id="screen-5">
+    <div class="step-card-header">
+      <div class="step-num">5</div>
+      <div>
+        <h2>Step Five: Board Report & Final Decision</h2>
+        <p>The final stage of the internal process</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="guidance">
+        After issuing its final report, the Complaint Committee presents an <strong>executive summary</strong> to the full Board of Trustees. The Board may be asked to vote on any policy or action items arising from the Committee's conclusions.
+      </div>
+      <p class="question-text">Are you satisfied with the outcome of the Complaint Committee's process?</p>
+      <div class="btn-group">
+        <button class="btn btn-gold" onclick="go('screen-resolved')">✅ Yes — the complaint has been resolved</button>
+        <button class="btn btn-danger" onclick="go('screen-escalate')">❌ No — I am not satisfied with the outcome</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SCREEN: ESCALATE TO COMMISSIONER -->
+  <!-- ============================================================ -->
+  <div class="step-card" id="screen-escalate">
+    <div class="step-card-header">
+      <div class="step-num">!</div>
+      <div>
+        <h2>External Escalation: Commissioner of Education</h2>
+        <p>Beyond the school's internal process</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="alert alert-info">
+        <span class="alert-icon">🏛️</span>
+        <div>If the Complaint Committee has not adequately addressed your complaint, you have the right to submit it in writing to the <strong>Commissioner of Education</strong>.</div>
+      </div>
+      <p class="question-text">To escalate to the Commissioner:</p>
+      <ul class="checklist">
+        <li>Submit your complaint in writing to the Massachusetts Commissioner of Education.</li>
+        <li>Include all documentation from the internal process (Steps 1–5).</li>
+        <li>Reference <strong>M.G.L. c. 71 section 89</strong> and <strong>603 CMR 1.00</strong> (the laws governing Massachusetts Charter Schools).</li>
+        <li>You may request a copy of these laws from River Valley Charter School.</li>
+      </ul>
+      <div class="alert alert-warn">
+        <span class="alert-icon">📄</span>
+        <div>Contact River Valley Charter School to request a copy of the relevant Massachusetts Charter School laws upon which to base your submission.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- OUTCOME: RESOLVED -->
+  <!-- ============================================================ -->
+  <div class="outcome-card outcome-go" id="screen-resolved">
+    <div class="outcome-icon">🎉</div>
+    <h3>Complaint Resolved</h3>
+    <p>We're glad your complaint has been resolved. The RVCS Complaint Policy is designed to find solutions that work for the whole school community. No further action is needed.</p>
+    <div class="restart-wrap">
+      <button class="restart-btn" onclick="restart()">Start over for a new complaint</button>
+    </div>
+  </div>
+
+  <div class="restart-wrap" id="main-restart" style="display:none;">
+    <button class="restart-btn" onclick="restart()">← Start over</button>
+  </div>
+
+</main>
+
+<footer>
+  River Valley Charter School &bull; Complaint Policy (Revised May 2015) &bull; Based on M.G.L. c. 71 §89 &amp; 603 CMR 1.00
+</footer>
+
+<script>
+  const TOTAL_STEPS = 6;
+
+  const stepProgress = {
+    'screen-0': 0,
+    'screen-employee': 1,
+    'screen-1': 1,
+    'screen-1-action': 1,
+    'screen-1b': 1,
+    'screen-2': 2,
+    'screen-2-action': 2,
+    'screen-2b': 2,
+    'screen-3': 3,
+    'screen-4': 4,
+    'screen-4-wait': 4,
+    'screen-5': 5,
+    'screen-escalate': 6,
+    'screen-resolved': 6,
+  };
+
+  const outcomeScreens = ['screen-resolved', 'screen-escalate'];
+
+  function go(id) {
+    // Hide all step cards and outcome cards
+    document.querySelectorAll('.step-card, .outcome-card').forEach(el => el.classList.remove('active'));
+
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Show/hide the global restart button
+    const isOutcome = outcomeScreens.includes(id);
+    const restartEl = document.getElementById('main-restart');
+    if (id === 'screen-resolved') {
+      restartEl.style.display = 'none';
+    } else if (isOutcome) {
+      restartEl.style.display = 'block';
+    } else {
+      restartEl.style.display = 'none';
+    }
+
+    // Update progress
+    const step = stepProgress[id] ?? 0;
+    const pct = Math.round((step / TOTAL_STEPS) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = step === 0
+      ? 'Getting started'
+      : step >= TOTAL_STEPS
+      ? 'Process complete'
+      : `Step ${step} of ${TOTAL_STEPS - 1}`;
+  }
+
+  function restart() {
+    go('screen-0');
+  }
+
+  // Init
+  go('screen-0');
+</script>
+</body>
+</html>
