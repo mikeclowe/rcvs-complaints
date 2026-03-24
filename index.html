@@ -221,6 +221,22 @@
   .restart-btn { background: none; border: none; color: var(--text-muted); font-size: 12.5px; cursor: pointer; text-decoration: underline; font-family: 'DM Sans', sans-serif; }
   .restart-btn:hover { color: var(--navy); }
 
+  /* PRIVACY NOTICE */
+  .privacy-notice {
+    background: #f0f4ff;
+    border-bottom: 1px solid #c8d5f5;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 12.5px;
+    color: #3a4a7a;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .privacy-notice .lock-icon { font-size: 15px; flex-shrink: 0; }
+
   /* FOOTER */
   footer { text-align: center; padding: 24px; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--cream-dark); line-height: 1.9; }
   footer a { color: var(--navy); text-decoration: underline; }
@@ -242,9 +258,14 @@
 </header>
 <div class="policy-note">Based on <strong>RVCS Complaint Policy (Revised May 2015)</strong> — complaints should be resolved as close to their source as possible.</div>
 
+<div class="privacy-notice">
+  <span class="lock-icon">🔒</span>
+  <span><strong>Your privacy is protected.</strong> This page does not collect, store, or transmit any information you enter. Everything stays entirely in your browser and is cleared when you close or refresh the page.</span>
+</div>
+
 <div id="draft-bar">
   <div class="draft-dot"></div>
-  <span>Building your complaint submission — your answers are being saved as you go</span>
+  <span>Building your complaint submission — answers are held in your browser only and never sent anywhere</span>
 </div>
 
 <main>
@@ -669,6 +690,8 @@
   River Valley Charter School &bull;
   <a href="https://irp.cdn-website.com/b7ac302e/files/uploaded/Complaint_Policy_V2_For_Approval_May_2015.pdf" target="_blank" rel="noopener">Complaint Policy (Revised May 2015) ↗</a>
   &bull; Based on M.G.L. c. 71 §89 &amp; 603 CMR 1.00
+  <br>
+  🔒 This page does not store or transmit any information. All data entered stays in your browser only.
 </footer>
 
 <script>
