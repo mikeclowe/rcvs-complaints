@@ -305,8 +305,8 @@ footer a:hover { color: var(--gold); }
 ════════════════════════════════════════════════ -->
 <header>
   <div class="header-inner">
-    <div class="header-badge">Parent Community Guide</div>
-    <h1>River Valley Charter School</h1>
+    <div class="header-badge">River Valley Charter School</div>
+    <h1>Parent Community Guide</h1>
     <p class="subtitle">A parent-run resource for navigating complaints and reporting incidents</p>
     <div class="tab-bar">
       <button class="tab-btn" id="tab-complaint" onclick="switchTab('complaint')">📋 Complaint Process</button>
@@ -729,7 +729,7 @@ footer a:hover { color: var(--gold); }
           <div class="alert alert-teal" style="margin-bottom:20px;">
             <span class="alert-icon">✅</span>
             <div>
-              Your incident report has been prepared. In order to show the number and magnitude of incidents, we are attempting to consolidate incidents across the school in a single place. If you would like to add your incident to the pool, please email both the text email and PDF to <strong>rvcsincidents@gmail.com</strong>.
+              Your incident report has been prepared. In order to show the number and magnitude of incidents, we are attempting to consolidate incidents across the school in a single place. If you would like to add your incident to the pool, please email both the text email and PDF to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80f2f6e3f3e9eee3e9e4e5eef4f3c0e7ede1e9ecaee3efed">[email&#160;protected]</a></strong>.
             </div>
           </div>
 
@@ -739,7 +739,7 @@ footer a:hover { color: var(--gold); }
             <button class="pdf-btn" id="i-pdf-btn" onclick="iDownloadPDF()">📄 Download Incident Report PDF</button>
           </div>
 
-          <strong style="font-size:13.5px;color:var(--teal);display:block;margin-bottom:12px;">Step 2 — Copy and send this email to <span style="text-decoration:underline;">rvcsincidents@gmail.com</span>:</strong>
+          <strong style="font-size:13.5px;color:var(--teal);display:block;margin-bottom:12px;">Step 2 — Copy and send this email to <span style="text-decoration:underline;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="32404451415b5c515b56575c464172555f535b5e1c515d5f">[email&#160;protected]</a></span>:</strong>
 
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
             <span style="font-size:13px;color:var(--text-muted);">Attach your downloaded PDF before sending.</span>
@@ -747,7 +747,7 @@ footer a:hover { color: var(--gold); }
           </div>
 
           <div class="email-preview">
-            <div class="email-top email-top-incident"><span>To: </span><strong>rvcsincidents@gmail.com</strong></div>
+            <div class="email-top email-top-incident"><span>To: </span><strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="186a6e7b6b71767b717c7d766c6b587f75797174367b7775">[email&#160;protected]</a></strong></div>
             <div class="email-meta">
               <div class="email-meta-row"><span class="lbl">From:</span><span id="i-em-from">—</span></div>
               <div class="email-meta-row"><span class="lbl">Subject:</span><span id="i-em-subject">—</span></div>
@@ -790,14 +790,11 @@ footer a:hover { color: var(--gold); }
   🔒 This page does not store or transmit any information. All data entered stays in your browser only.
 </footer>
 
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ═══════════════════════════════════════════════
-// ROUTING — read URL hash/path on load
-// ═══════════════════════════════════════════════
+<script>
+// === ROUTING ===
 function getInitialTab() {
-  const path = window.location.pathname;
-  const hash = window.location.hash;
+  var path = window.location.pathname;
+  var hash = window.location.hash;
   if (path.endsWith('/incident') || path.endsWith('/incident.html') || hash === '#incident') return 'incident';
   return 'complaint';
 }
@@ -810,13 +807,10 @@ function switchTab(tab) {
   history.replaceState(null, '', tab === 'incident' ? '#incident' : '#complaint');
 }
 
-
-// ═══════════════════════════════════════════════
-// COMPLAINT — state & helpers
-// ═══════════════════════════════════════════════
-const cData = {};
-const C_TOTAL = 6;
-const cProgress = {
+// === COMPLAINT STATE ===
+var cData = {};
+var C_TOTAL = 6;
+var cProgress = {
   'cs-0':0,'cs-emp':1,'cs-1':1,'cs-1-stop':1,'cs-1b':1,
   'cs-2':2,'cs-2-stop':2,'cs-2b':2,
   'cs-3':3,'cs-4':4,'cs-4-wait':4,'cs-5':5,
@@ -827,8 +821,8 @@ function csave() {
   ['c-name','c-email','c-student','c-grade',
    'c-s1-who','c-s1-date','c-s1-discussed','c-s1-outcome',
    'c-s2-date','c-s2-extra','c-s2-plan','c-s2-why',
-   'c-complaint','c-resolution'].forEach(id => {
-    const el = document.getElementById(id);
+   'c-complaint','c-resolution'].forEach(function(id) {
+    var el = document.getElementById(id);
     if (el) cData[id] = el.value;
   });
   if ((cData['c-name']||'').trim() || (cData['c-student']||'').trim())
@@ -837,9 +831,9 @@ function csave() {
 function cSetCat(c) { cData.cat = c; }
 function cv(id, fb) { return (cData[id]||'').trim() || fb; }
 function cfmtDate(id, fb) {
-  const raw = (cData[id]||'').trim();
+  var raw = (cData[id]||'').trim();
   if (!raw) return fb;
-  const d = new Date(raw+'T12:00:00');
+  var d = new Date(raw + 'T12:00:00');
   return isNaN(d) ? raw : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 }
 function todayStr() {
@@ -848,126 +842,106 @@ function todayStr() {
 
 function cGo(id) {
   document.querySelectorAll('#page-complaint .step-card, #page-complaint .outcome-card')
-    .forEach(el => el.classList.remove('active'));
-  const t = document.getElementById(id);
+    .forEach(function(el) { el.classList.remove('active'); });
+  var t = document.getElementById(id);
   if (t) { t.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
-  const rw = document.getElementById('c-restart-wrap');
-  rw.style.display = (id==='cs-escalate') ? 'block' : 'none';
-  const step = cProgress[id] ?? 0;
-  document.getElementById('c-prog-bar').style.width = Math.round(step/C_TOTAL*100)+'%';
+  var rw = document.getElementById('c-restart-wrap');
+  rw.style.display = (id === 'cs-escalate') ? 'block' : 'none';
+  var step = cProgress[id] !== undefined ? cProgress[id] : 0;
+  document.getElementById('c-prog-bar').style.width = Math.round(step/C_TOTAL*100) + '%';
   document.getElementById('c-prog-label').textContent =
-    step===0 ? 'Getting started' : step>=C_TOTAL ? 'Process complete' : `Step ${step} of ${C_TOTAL-1}`;
+    step===0 ? 'Getting started' : step>=C_TOTAL ? 'Process complete' : 'Step ' + step + ' of ' + (C_TOTAL-1);
 }
 
 function cGenEmail() {
   csave();
-  const name    = cv('c-name',    '[Your Full Name]');
-  const email   = cv('c-email',   '[Your Email]');
-  const student = cv('c-student', '[Student Name]');
-  const grade   = cv('c-grade',   '[Grade/Class]');
-  const s1who   = cv('c-s1-who',  '[Name and title of person contacted]');
-  const s1date  = cfmtDate('c-s1-date',  '[Date of Step One conversation]');
-  const s1disc  = cv('c-s1-discussed',   '[What was discussed]');
-  const s1out   = cv('c-s1-outcome',     '[Outcome of Step One]');
-  const s2date  = cfmtDate('c-s2-date',  '[Date of meeting with Director]');
-  const s2extra = cv('c-s2-extra','');
-  const s2plan  = cv('c-s2-plan', '[Resolution plan agreed with Director]');
-  const s2why   = cv('c-s2-why',  '[Why complaint remains unresolved]');
-  const comp    = cv('c-complaint','[Detailed description of the complaint]');
-  const res     = cv('c-resolution','[Specific requested resolution]');
-  const s2str   = s2extra ? `${s2date} (and additionally on ${s2extra})` : s2date;
-  const subject = `Formal Complaint Submission — ${student}, ${grade} — ${todayStr()}`;
-  const body =
-`Dear Chair of the Board of Trustees,
+  var name    = cv('c-name',    '[Your Full Name]');
+  var email   = cv('c-email',   '[Your Email]');
+  var student = cv('c-student', '[Student Name]');
+  var grade   = cv('c-grade',   '[Grade/Class]');
+  var s1who   = cv('c-s1-who',  '[Name and title of person contacted]');
+  var s1date  = cfmtDate('c-s1-date',  '[Date of Step One conversation]');
+  var s1disc  = cv('c-s1-discussed',   '[What was discussed]');
+  var s1out   = cv('c-s1-outcome',     '[Outcome of Step One]');
+  var s2date  = cfmtDate('c-s2-date',  '[Date of meeting with Director]');
+  var s2extra = cv('c-s2-extra','');
+  var s2plan  = cv('c-s2-plan', '[Resolution plan agreed with Director]');
+  var s2why   = cv('c-s2-why',  '[Why complaint remains unresolved]');
+  var comp    = cv('c-complaint','[Detailed description of the complaint]');
+  var res     = cv('c-resolution','[Specific requested resolution]');
+  var s2str   = s2extra ? s2date + ' (and additionally on ' + s2extra + ')' : s2date;
+  var subject = 'Formal Complaint Submission — ' + student + ', ' + grade + ' — ' + todayStr();
+  var body =
+'Dear Chair of the Board of Trustees,\n\n' +
+'I am writing to formally submit a complaint and to request that this matter be reviewed by the Complaint Committee of the Board of Trustees.\n\n' +
+'My name is ' + name + ', and I am the parent/guardian of ' + student + ' (' + grade + '). My contact email is ' + email + '.\n\n' +
+'─────────────────────────────────────────\n' +
+'NATURE OF COMPLAINT\n' +
+'─────────────────────────────────────────\n' +
+comp + '\n\n' +
+'─────────────────────────────────────────\n' +
+'STEP ONE: DIRECT CONTACT\n' +
+'─────────────────────────────────────────\n' +
+'I contacted ' + s1who + ' directly on ' + s1date + '.\n\n' +
+'Discussion: ' + s1disc + '\n\n' +
+'Outcome: ' + s1out + '\n\n' +
+'As this did not lead to a satisfactory resolution, I proceeded to Step Two.\n\n' +
+'─────────────────────────────────────────\n' +
+'STEP TWO: SCHOOL DIRECTOR\n' +
+'─────────────────────────────────────────\n' +
+'I met with the School Director on ' + s2str + '.\n\n' +
+'Resolution plan discussed: ' + s2plan + '\n\n' +
+'Reason complaint remains unresolved: ' + s2why + '\n\n' +
+'Having allowed reasonable time for the Director to act, I am now requesting formal Complaint Committee review.\n\n' +
+'─────────────────────────────────────────\n' +
+'RESOLUTION REQUESTED\n' +
+'─────────────────────────────────────────\n' +
+res + '\n\n' +
+'─────────────────────────────────────────\n' +
+'I understand all named parties will receive a copy of this report. I am prepared to attend Committee meetings and cooperate fully.\n\n' +
+'Respectfully,\n\n' +
+name + '\n' + email + '\n' + todayStr();
 
-I am writing to formally submit a complaint and to request that this matter be reviewed by the Complaint Committee of the Board of Trustees.
-
-My name is ${name}, and I am the parent/guardian of ${student} (${grade}). My contact email is ${email}.
-
-─────────────────────────────────────────
-NATURE OF COMPLAINT
-─────────────────────────────────────────
-${comp}
-
-─────────────────────────────────────────
-STEP ONE: DIRECT CONTACT
-─────────────────────────────────────────
-I contacted ${s1who} directly on ${s1date}.
-
-Discussion: ${s1disc}
-
-Outcome: ${s1out}
-
-As this did not lead to a satisfactory resolution, I proceeded to Step Two.
-
-─────────────────────────────────────────
-STEP TWO: SCHOOL DIRECTOR
-─────────────────────────────────────────
-I met with the School Director on ${s2str}.
-
-Resolution plan discussed: ${s2plan}
-
-Reason complaint remains unresolved: ${s2why}
-
-Having allowed reasonable time for the Director to act, I am now requesting formal Complaint Committee review.
-
-─────────────────────────────────────────
-RESOLUTION REQUESTED
-─────────────────────────────────────────
-${res}
-
-─────────────────────────────────────────
-I understand all named parties will receive a copy of this report. I am prepared to attend Committee meetings and cooperate fully.
-
-Respectfully,
-
-${name}
-${email}
-${todayStr()}`;
-
-  document.getElementById('c-em-from').textContent    = `${name} <${email}>`;
+  document.getElementById('c-em-from').textContent    = name + ' <' + email + '>';
   document.getElementById('c-em-subject').textContent = subject;
   document.getElementById('c-em-date').textContent    = todayStr();
-  const escaped  = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  var escaped = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   document.getElementById('c-em-body').innerHTML =
     escaped.replace(/\[([^\]]+)\]/g,'<span class="placeholder">[$1]</span>');
   cData._subject = subject;
   cData._body    = body;
-  const out = document.getElementById('c-email-out');
+  var out = document.getElementById('c-email-out');
   out.style.display = 'block';
-  setTimeout(()=>out.scrollIntoView({behavior:'smooth',block:'start'}),50);
-  const cb = document.getElementById('c-copy-btn');
+  setTimeout(function(){ out.scrollIntoView({behavior:'smooth',block:'start'}); }, 50);
+  var cb = document.getElementById('c-copy-btn');
   cb.innerHTML = '📋 Copy to clipboard'; cb.classList.remove('copied');
 }
 
 function cCopyEmail() {
-  const full = `Subject: ${cData._subject||''}\n\n${cData._body||''}`;
-  navigator.clipboard.writeText(full).then(()=>{
-    const cb = document.getElementById('c-copy-btn');
-    cb.innerHTML='✅ Copied!'; cb.classList.add('copied');
-    setTimeout(()=>{ cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied'); },2500);
-  }).catch(()=>alert('Could not copy automatically — please select and copy the email text manually.'));
+  var full = 'Subject: ' + (cData._subject||'') + '\n\n' + (cData._body||'');
+  navigator.clipboard.writeText(full).then(function() {
+    var cb = document.getElementById('c-copy-btn');
+    cb.innerHTML = '✅ Copied!'; cb.classList.add('copied');
+    setTimeout(function(){ cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied'); }, 2500);
+  }).catch(function(){ alert('Could not copy automatically — please select and copy the email text manually.'); });
 }
 
 function cRestart() {
   document.querySelectorAll('#page-complaint input,#page-complaint textarea,#page-complaint select')
-    .forEach(el=>el.value='');
-  Object.keys(cData).forEach(k=>delete cData[k]);
+    .forEach(function(el){ el.value=''; });
+  Object.keys(cData).forEach(function(k){ delete cData[k]; });
   document.getElementById('cdraft-bar').classList.remove('visible');
   document.getElementById('c-email-out').style.display='none';
   cGo('cs-0');
 }
 
-
-// ═══════════════════════════════════════════════
-// INCIDENT — state & helpers
-// ═══════════════════════════════════════════════
-const iData = {};
+// === INCIDENT STATE ===
+var iData = {};
 
 function isave() {
   ['i-name','i-email','i-role','i-date','i-other-cat',
-   'i-involved','i-location','i-description','i-outcome','i-anon'].forEach(id=>{
-    const el = document.getElementById(id);
+   'i-involved','i-location','i-description','i-outcome','i-anon'].forEach(function(id){
+    var el = document.getElementById(id);
     if (el) iData[id] = el.value;
   });
   iData.categories = getSelectedCats();
@@ -977,18 +951,18 @@ function isave() {
 
 function toggleCat(el) {
   el.classList.toggle('selected');
-  const otherWrap = document.getElementById('i-other-wrap');
-  const anyOther = document.querySelector('.other-chip.selected');
+  var otherWrap = document.getElementById('i-other-wrap');
+  var anyOther = document.querySelector('.other-chip.selected');
   otherWrap.style.display = anyOther ? 'block' : 'none';
   isave();
 }
 
 function getSelectedCats() {
-  const chips = document.querySelectorAll('#i-category-grid .cat-chip.selected');
-  const cats = [];
-  chips.forEach(c => {
+  var chips = document.querySelectorAll('#i-category-grid .cat-chip.selected');
+  var cats = [];
+  chips.forEach(function(c) {
     if (c.classList.contains('other-chip')) {
-      const oc = (document.getElementById('i-other-cat').value||'').trim();
+      var oc = (document.getElementById('i-other-cat').value||'').trim();
       cats.push(oc || 'Other');
     } else {
       cats.push(c.textContent.trim());
@@ -999,104 +973,93 @@ function getSelectedCats() {
 
 function iv(id, fb) { return (iData[id]||'').trim() || fb; }
 function ifmtDate(id, fb) {
-  const raw = (iData[id]||'').trim();
+  var raw = (iData[id]||'').trim();
   if (!raw) return fb;
-  const d = new Date(raw+'T12:00:00');
+  var d = new Date(raw + 'T12:00:00');
   return isNaN(d) ? raw : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 }
 
 function iGo(id) {
   document.querySelectorAll('#page-incident .step-card, #page-incident .outcome-card')
-    .forEach(el=>el.classList.remove('active'));
-  const t = document.getElementById(id);
+    .forEach(function(el){ el.classList.remove('active'); });
+  var t = document.getElementById(id);
   if (t) { t.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
 }
 
 function iGenerate() {
   isave();
-  const name    = iv('i-name',   '[Your Name]');
-  const email   = iv('i-email',  '[Your Email]');
-  const role    = iv('i-role',   '[Your Role]');
-  const date    = ifmtDate('i-date', '[Date of Incident]');
-  const cats    = iData.categories && iData.categories.length ? iData.categories.join(', ') : '[Category not selected]';
-  const involv  = iv('i-involved',    'Not specified');
-  const loc     = iv('i-location',    'Not specified');
-  const desc    = iv('i-description', '[Description of the incident]');
-  const outcome = iv('i-outcome',     'No specific outcome requested.');
-  const isAnon  = (iData['i-anon']||'') === 'anon';
-  const displayName = isAnon ? 'Anonymous' : name;
-  const displayEmail = isAnon ? '(withheld)' : email;
-  const subject = `Community Incident Report — ${cats} — ${todayStr()}`;
+  var name    = iv('i-name',   '[Your Name]');
+  var email   = iv('i-email',  '[Your Email]');
+  var role    = iv('i-role',   '[Your Role]');
+  var date    = ifmtDate('i-date', '[Date of Incident]');
+  var cats    = iData.categories && iData.categories.length ? iData.categories.join(', ') : '[Category not selected]';
+  var involv  = iv('i-involved',    'Not specified');
+  var loc     = iv('i-location',    'Not specified');
+  var desc    = iv('i-description', '[Description of the incident]');
+  var outcome = iv('i-outcome',     'No specific outcome requested.');
+  var isAnon  = (iData['i-anon']||'') === 'anon';
+  var displayName  = isAnon ? 'Anonymous' : name;
+  var displayEmail = isAnon ? '(withheld)' : email;
+  var subject = 'Community Incident Report — ' + cats + ' — ' + todayStr();
 
-  const body =
-`Dear RVCS Incident Team,
+  var body =
+'Dear RVCS Incident Team,\n\n' +
+'Please find attached a community incident report submitted via the RVCS Parent Community Guide.\n\n' +
+'SUBMITTED BY: ' + displayName + '\n' +
+'CONTACT: ' + displayEmail + '\n' +
+'ROLE: ' + role + '\n' +
+'SUBMISSION DATE: ' + todayStr() + '\n\n' +
+'Please refer to the attached PDF for the full incident report. A summary is provided below.\n\n' +
+'─────────────────────────────────────────\n' +
+'INCIDENT SUMMARY\n' +
+'─────────────────────────────────────────\n' +
+'Date of Incident: ' + date + '\n' +
+'Category: ' + cats + '\n' +
+'Location / Context: ' + loc + '\n' +
+'Individuals Involved: ' + involv + '\n\n' +
+'Description:\n' + desc + '\n\n' +
+'Desired Outcome:\n' + outcome + '\n\n' +
+'─────────────────────────────────────────\n' +
+(isAnon ? 'This report has been submitted anonymously at the submitter\'s request.' : 'Submitted by ' + name + ' (' + email + ') — ' + role) + '\n' +
+todayStr();
 
-Please find attached a community incident report submitted via the RVCS Parent Community Guide.
-
-SUBMITTED BY: ${displayName}
-CONTACT: ${displayEmail}
-ROLE: ${role}
-SUBMISSION DATE: ${todayStr()}
-
-Please refer to the attached PDF for the full incident report. A summary is provided below.
-
-─────────────────────────────────────────
-INCIDENT SUMMARY
-─────────────────────────────────────────
-Date of Incident: ${date}
-Category: ${cats}
-Location / Context: ${loc}
-Individuals Involved: ${involv}
-
-Description:
-${desc}
-
-Desired Outcome:
-${outcome}
-
-─────────────────────────────────────────
-${isAnon ? 'This report has been submitted anonymously at the submitter\'s request.' : `Submitted by ${name} (${email}) — ${role}`}
-${todayStr()}`;
-
-  document.getElementById('i-em-from').textContent    = `${displayName} <${displayEmail}>`;
+  document.getElementById('i-em-from').textContent    = displayName + ' <' + displayEmail + '>';
   document.getElementById('i-em-subject').textContent = subject;
   document.getElementById('i-em-date').textContent    = todayStr();
-  const escaped = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  var escaped = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   document.getElementById('i-em-body').innerHTML =
     escaped.replace(/\[([^\]]+)\]/g,'<span class="placeholder">[$1]</span>');
   iData._subject = subject;
   iData._body    = body;
-  iData._pdfData = { name, email, role, date, cats, involv, loc, desc, outcome, isAnon, displayName, displayEmail };
+  iData._pdfData = { name:name, email:email, role:role, date:date, cats:cats, involv:involv, loc:loc, desc:desc, outcome:outcome, isAnon:isAnon, displayName:displayName, displayEmail:displayEmail };
 
-  const out = document.getElementById('i-output');
+  var out = document.getElementById('i-output');
   out.style.display = 'block';
-  setTimeout(()=>out.scrollIntoView({behavior:'smooth',block:'start'}),50);
-  const cb = document.getElementById('i-copy-btn');
-  cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied');
+  setTimeout(function(){ out.scrollIntoView({behavior:'smooth',block:'start'}); }, 50);
+  var cb = document.getElementById('i-copy-btn');
+  cb.innerHTML = '📋 Copy to clipboard'; cb.classList.remove('copied');
 }
 
 function iCopyEmail() {
-  const full = `Subject: ${iData._subject||''}\n\nTo: rvcsincidents@gmail.com\n\n${iData._body||''}`;
-  navigator.clipboard.writeText(full).then(()=>{
-    const cb = document.getElementById('i-copy-btn');
-    cb.innerHTML='✅ Copied!'; cb.classList.add('copied');
-    setTimeout(()=>{ cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied'); },2500);
-  }).catch(()=>alert('Could not copy automatically — please select and copy the email text manually.'));
+  var full = 'Subject: ' + (iData._subject||'') + '\n\nTo: rvcsincidents@gmail.com\n\n' + (iData._body||'');
+  navigator.clipboard.writeText(full).then(function() {
+    var cb = document.getElementById('i-copy-btn');
+    cb.innerHTML = '✅ Copied!'; cb.classList.add('copied');
+    setTimeout(function(){ cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied'); }, 2500);
+  }).catch(function(){ alert('Could not copy automatically — please select and copy the email text manually.'); });
 }
 
 function iDownloadPDF() {
-  const d = iData._pdfData;
+  var d = iData._pdfData;
   if (!d) { alert('Please generate the report first.'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit:'pt', format:'letter' });
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ unit:'pt', format:'letter' });
+  var W = doc.internal.pageSize.getWidth();
+  var margin = 56;
+  var contentW = W - margin * 2;
+  var y = 60;
 
-  const W = doc.internal.pageSize.getWidth();
-  const margin = 56;
-  const contentW = W - margin * 2;
-  let y = 60;
-
-  // Header bar
-  doc.setFillColor(26, 39, 68); // navy
+  doc.setFillColor(26, 39, 68);
   doc.rect(0, 0, W, 48, 'F');
   doc.setTextColor(255,255,255);
   doc.setFont('helvetica','bold');
@@ -1107,7 +1070,6 @@ function iDownloadPDF() {
   doc.setTextColor(201,168,76);
   doc.text('COMMUNITY INCIDENT REPORT', margin, 42);
 
-  // Confidentiality note
   y = 68;
   doc.setFillColor(230, 244, 244);
   doc.roundedRect(margin, y, contentW, 28, 4, 4, 'F');
@@ -1115,10 +1077,8 @@ function iDownloadPDF() {
   doc.setFontSize(9);
   doc.setFont('helvetica','italic');
   doc.text('This document is confidential and intended solely for the named recipient.', margin+10, y+18);
-
   y += 44;
 
-  // Title
   doc.setFont('helvetica','bold');
   doc.setFontSize(18);
   doc.setTextColor(26,39,68);
@@ -1129,8 +1089,7 @@ function iDownloadPDF() {
   doc.line(margin, y, margin+120, y);
   y += 20;
 
-  // Meta info table
-  const metaRows = [
+  var metaRows = [
     ['Submission Date', todayStr()],
     ['Submitted By', d.isAnon ? 'Anonymous' : d.displayName],
     ['Contact', d.isAnon ? '(withheld)' : d.displayEmail],
@@ -1138,12 +1097,13 @@ function iDownloadPDF() {
     ['Date of Incident', d.date],
     ['Category', d.cats],
     ['Location / Context', d.loc],
-    ['Individuals Involved', d.involv],
+    ['Individuals Involved', d.involv]
   ];
 
   doc.setFontSize(9.5);
-  metaRows.forEach(([label, val], i) => {
-    const rowY = y + i * 20;
+  metaRows.forEach(function(row, i) {
+    var label = row[0]; var val = row[1];
+    var rowY = y + i * 20;
     if (i % 2 === 0) {
       doc.setFillColor(248, 245, 238);
       doc.rect(margin, rowY - 13, contentW, 20, 'F');
@@ -1151,23 +1111,21 @@ function iDownloadPDF() {
     doc.setFont('helvetica','bold'); doc.setTextColor(26,39,68);
     doc.text(label + ':', margin+8, rowY);
     doc.setFont('helvetica','normal'); doc.setTextColor(42,42,42);
-    const lines = doc.splitTextToSize(val||'Not specified', contentW-130);
+    var lines = doc.splitTextToSize(val||'Not specified', contentW-130);
     doc.text(lines, margin+160, rowY);
   });
   y += metaRows.length * 20 + 14;
 
-  // Section: Description
   function section(title, content, currentY) {
     if (currentY > 660) { doc.addPage(); currentY = 56; }
-    // Section header
     doc.setFillColor(26,39,68);
     doc.rect(margin, currentY, contentW, 22, 'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(255,255,255);
     doc.text(title, margin+8, currentY+15);
     currentY += 30;
     doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(42,42,42);
-    const lines = doc.splitTextToSize(content || 'Not provided.', contentW-8);
-    lines.forEach(line => {
+    var lines = doc.splitTextToSize(content || 'Not provided.', contentW-8);
+    lines.forEach(function(line) {
       if (currentY > 700) { doc.addPage(); currentY = 56; }
       doc.text(line, margin+4, currentY);
       currentY += 15;
@@ -1178,48 +1136,31 @@ function iDownloadPDF() {
   y = section('Description of the Incident', d.desc, y);
   y = section('Desired Outcome', d.outcome, y);
 
-  // Footer
-  const pageCount = doc.internal.getNumberOfPages();
-  for (let p = 1; p <= pageCount; p++) {
+  var pageCount = doc.internal.getNumberOfPages();
+  for (var p = 1; p <= pageCount; p++) {
     doc.setPage(p);
     doc.setFontSize(8); doc.setTextColor(150,150,150);
     doc.setFont('helvetica','normal');
-    doc.text(`River Valley Charter School — Community Incident Report — Generated ${todayStr()}`, margin, 750);
-    doc.text(`Page ${p} of ${pageCount}`, W - margin, 750, {align:'right'});
+    doc.text('River Valley Charter School — Community Incident Report — Generated ' + todayStr(), margin, 750);
+    doc.text('Page ' + p + ' of ' + pageCount, W - margin, 750, {align:'right'});
   }
 
-  doc.save(`RVCS_Incident_Report_${todayStr().replace(/,?\s/g,'_')}.pdf`);
+  doc.save('RVCS_Incident_Report_' + todayStr().replace(/,?\s+/g,'_') + '.pdf');
 
-  const btn = document.getElementById('i-pdf-btn');
+  var btn = document.getElementById('i-pdf-btn');
   btn.innerHTML = '✅ PDF Downloaded';
-  setTimeout(()=>{ btn.innerHTML='📄 Download Incident Report PDF'; },3000);
+  setTimeout(function(){ btn.innerHTML='📄 Download Incident Report PDF'; }, 3000);
 }
 
 function iRestart() {
   document.querySelectorAll('#page-incident input,#page-incident textarea,#page-incident select')
-    .forEach(el=>el.value='');
-  document.querySelectorAll('#i-category-grid .cat-chip').forEach(c=>c.classList.remove('selected'));
+    .forEach(function(el){ el.value=''; });
+  document.querySelectorAll('#i-category-grid .cat-chip').forEach(function(c){ c.classList.remove('selected'); });
   document.getElementById('i-other-wrap').style.display='none';
-  Object.keys(iData).forEach(k=>delete iData[k]);
+  Object.keys(iData).forEach(function(k){ delete iData[k]; });
   document.getElementById('idraft-bar').classList.remove('visible');
   document.getElementById('i-output').style.display='none';
   iGo('is-form');
-}
-
-// === ROUTING ===
-function getInitialTab() {
-  const path = window.location.pathname;
-  const hash = window.location.hash;
-  if (path.endsWith('/incident') || path.endsWith('/incident.html') || hash === '#incident') return 'incident';
-  return 'complaint';
-}
-
-function switchTab(tab) {
-  document.getElementById('page-complaint').classList.toggle('active', tab === 'complaint');
-  document.getElementById('page-incident').classList.toggle('active',  tab === 'incident');
-  document.getElementById('tab-complaint').className = 'tab-btn' + (tab === 'complaint' ? ' active-complaint' : '');
-  document.getElementById('tab-incident').className  = 'tab-btn' + (tab === 'incident'  ? ' active-incident'  : '');
-  history.replaceState(null, '', tab === 'incident' ? '#incident' : '#complaint');
 }
 
 // === INIT ===
