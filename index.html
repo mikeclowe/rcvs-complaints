@@ -3,689 +3,782 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RVCS Complaint Process</title>
+<title>RVCS Community Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #1a2744; --navy-light: #243560;
+  --gold: #c9a84c; --gold-light: #e8c97a;
+  --teal: #1a6b6b; --teal-light: #2a8a8a; --teal-pale: #e6f4f4;
+  --cream: #f8f5ee; --cream-dark: #ede8de;
+  --text: #2a2a2a; --text-muted: #666;
+  --red: #c0392b; --green: #2e7d52;
+  --white: #ffffff;
+  --shadow: 0 4px 24px rgba(26,39,68,0.10);
+  --radius: 12px;
+  --transition: 0.28s cubic-bezier(.4,0,.2,1);
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
 
-  :root {
-    --navy: #1a2744;
-    --navy-light: #243560;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --cream: #f8f5ee;
-    --cream-dark: #ede8de;
-    --text: #2a2a2a;
-    --text-muted: #666;
-    --red: #c0392b;
-    --green: #2e7d52;
-    --white: #ffffff;
-    --shadow: 0 4px 24px rgba(26,39,68,0.10);
-    --radius: 12px;
-    --transition: 0.28s cubic-bezier(.4,0,.2,1);
-  }
+/* ── HEADER ── */
+header {
+  background: var(--navy); color: var(--white);
+  padding: 28px 24px 0; text-align: center;
+  position: relative; overflow: hidden;
+}
+header::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(135deg,transparent,transparent 40px,rgba(201,168,76,0.05) 40px,rgba(201,168,76,0.05) 41px);
+}
+.header-inner { position: relative; z-index: 1; }
+.header-badge {
+  display: inline-block; background: var(--gold); color: var(--navy);
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; padding: 4px 14px; border-radius: 50px; margin-bottom: 10px;
+}
+header h1 {
+  font-family: 'Playfair Display', serif; font-size: clamp(20px,4vw,32px);
+  font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px;
+}
+header .subtitle { font-size: 13px; color: rgba(255,255,255,0.58); margin-bottom: 20px; }
 
-  html { scroll-behavior: smooth; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+/* ── TAB BAR ── */
+.tab-bar {
+  display: flex; justify-content: center;
+  position: relative; z-index: 1;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.tab-btn {
+  padding: 14px 36px; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  color: rgba(255,255,255,0.5); background: transparent;
+  border-bottom: 3px solid transparent;
+  transition: all var(--transition); white-space: nowrap;
+}
+.tab-btn:hover { color: rgba(255,255,255,0.85); }
+.tab-btn.active-complaint { color: var(--white); border-bottom-color: var(--gold); }
+.tab-btn.active-incident  { color: var(--white); border-bottom-color: #5dd4d4; }
 
-  /* HEADER */
-  header {
-    background: var(--navy); color: var(--white);
-    padding: 36px 24px 28px; text-align: center;
-    position: relative; overflow: hidden;
-  }
-  header::before {
-    content: ''; position: absolute; inset: 0;
-    background: repeating-linear-gradient(135deg, transparent, transparent 40px, rgba(201,168,76,0.05) 40px, rgba(201,168,76,0.05) 41px);
-  }
-  .header-badge {
-    display: inline-block; background: var(--gold); color: var(--navy);
-    font-size: 10px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; padding: 4px 14px; border-radius: 50px; margin-bottom: 14px;
-  }
-  header h1 {
-    font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 34px);
-    font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px;
-  }
-  header p { font-size: 14px; color: rgba(255,255,255,0.68); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+/* ── SUBHEADER BANDS ── */
+.subband {
+  font-size: 12.5px; text-align: center; padding: 9px 24px;
+  border-bottom: 2px solid var(--gold);
+}
+.subband-complaint { background: var(--navy-light); color: rgba(255,255,255,0.82); }
+.subband-complaint strong { color: var(--gold-light); }
+.subband-incident  { background: var(--teal); color: rgba(255,255,255,0.88); border-bottom-color: #5dd4d4; }
+.subband-incident strong { color: #9ef2f2; }
 
-  /* POLICY NOTE */
-  .policy-note {
-    background: var(--navy-light); color: rgba(255,255,255,0.82);
-    font-size: 12.5px; text-align: center; padding: 10px 24px;
-    border-bottom: 2px solid var(--gold);
-  }
-  .policy-note strong { color: var(--gold-light); }
+/* ── PRIVACY NOTICE ── */
+.privacy-notice {
+  background: #f0f4ff; border-bottom: 1px solid #c8d5f5;
+  padding: 9px 24px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; font-size: 12.5px; color: #3a4a7a; text-align: center; line-height: 1.5;
+}
+.privacy-notice.teal-privacy { background: #e6f6f6; border-bottom-color: #9edede; color: #1a5050; }
 
-  /* DRAFT BAR */
-  #draft-bar {
-    background: #e8f5ee; border-bottom: 1px solid #a8d5ba;
-    padding: 8px 24px; display: none;
-    align-items: center; justify-content: center;
-    gap: 10px; font-size: 12.5px; color: var(--green);
-  }
-  #draft-bar.visible { display: flex; }
-  .draft-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.8s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+/* ── DRAFT BAR ── */
+.draft-bar {
+  display: none; align-items: center; justify-content: center;
+  gap: 10px; font-size: 12.5px; padding: 8px 24px;
+}
+.draft-bar.visible { display: flex; }
+.draft-bar-complaint { background: #e8f5ee; border-bottom: 1px solid #a8d5ba; color: var(--green); }
+.draft-bar-incident  { background: var(--teal-pale); border-bottom: 1px solid #9edede; color: var(--teal); }
+.draft-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 1.8s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-  /* MAIN */
-  main { max-width: 780px; margin: 0 auto; padding: 36px 20px 60px; }
+/* ── PAGE PANELS ── */
+.page-panel { display: none; }
+.page-panel.active { display: block; }
 
-  /* PROGRESS */
-  .progress-header { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-  .progress-bar-wrap { flex: 1; height: 6px; background: var(--cream-dark); border-radius: 99px; overflow: hidden; }
-  .progress-bar-fill {
-    height: 100%; background: linear-gradient(90deg, var(--navy), var(--gold));
-    border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); width: 0%;
-  }
-  .progress-label { font-size: 12px; font-weight: 500; color: var(--text-muted); white-space: nowrap; }
+/* ── MAIN ── */
+main { max-width: 780px; margin: 0 auto; padding: 32px 20px 60px; }
 
-  /* STEP CARD */
-  .step-card {
-    background: var(--white); border-radius: var(--radius);
-    box-shadow: var(--shadow); overflow: hidden; display: none;
-    animation: fadeSlideIn 0.38s cubic-bezier(.4,0,.2,1) both;
-  }
-  .step-card.active { display: block; }
-  @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+/* ── PROGRESS ── */
+.progress-header { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.progress-bar-wrap { flex: 1; height: 6px; background: var(--cream-dark); border-radius: 99px; overflow: hidden; }
+.progress-bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--navy), var(--gold));
+  border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); width: 0%;
+}
+.progress-label { font-size: 12px; font-weight: 500; color: var(--text-muted); white-space: nowrap; }
 
-  .step-card-header {
-    background: var(--navy); padding: 20px 28px;
-    display: flex; align-items: center; gap: 16px;
-  }
-  .step-num {
-    width: 42px; height: 42px; border-radius: 50%;
-    background: var(--gold); color: var(--navy);
-    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 18px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .step-card-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
-  .step-card-header p { font-size: 12.5px; color: rgba(255,255,255,0.6); margin-top: 2px; }
-  .step-body { padding: 28px; }
+/* ── STEP CARD ── */
+.step-card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden; display: none;
+  animation: fadeUp 0.36s cubic-bezier(.4,0,.2,1) both;
+}
+.step-card.active { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 
-  /* FORM */
-  .field-group { margin-bottom: 18px; }
-  .field-group label {
-    display: block; font-size: 12.5px; font-weight: 600; color: var(--navy);
-    margin-bottom: 6px; letter-spacing: 0.3px; text-transform: uppercase;
-  }
-  .field-hint { font-size: 11.5px; color: var(--text-muted); margin-bottom: 6px; font-style: italic; }
-  .field-group input, .field-group select, .field-group textarea {
-    width: 100%; padding: 10px 14px;
-    border: 1.5px solid var(--cream-dark); border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 14px;
-    color: var(--text); background: var(--white);
-    transition: border-color var(--transition); outline: none;
-  }
-  .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
-    border-color: var(--navy); box-shadow: 0 0 0 3px rgba(26,39,68,0.08);
-  }
-  .field-group textarea { resize: vertical; min-height: 90px; line-height: 1.55; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media(max-width:520px){ .field-row { grid-template-columns: 1fr; } }
-  .fields-intro {
-    font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;
-    padding: 12px 16px; background: var(--cream); border-radius: 8px; border-left: 3px solid var(--gold);
-  }
+.card-header {
+  padding: 20px 28px; display: flex; align-items: center; gap: 16px;
+}
+.card-header-complaint { background: var(--navy); }
+.card-header-incident  { background: var(--teal); }
+.step-num {
+  width: 42px; height: 42px; border-radius: 50%;
+  font-family: 'Playfair Display', serif; font-weight: 700; font-size: 18px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-num-complaint { background: var(--gold); color: var(--navy); }
+.step-num-incident  { background: #5dd4d4; color: var(--teal); }
+.card-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
+.card-header p  { font-size: 12.5px; color: rgba(255,255,255,0.58); margin-top: 2px; }
+.step-body { padding: 28px; }
 
-  /* TEXT */
-  .question-text { font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.55; margin-bottom: 20px; }
-  .guidance {
-    background: var(--cream); border-left: 4px solid var(--gold);
-    border-radius: 0 8px 8px 0; padding: 14px 18px;
-    font-size: 13.5px; color: var(--text); line-height: 1.65; margin-bottom: 24px;
-  }
-  .guidance strong { color: var(--navy); }
+/* ── FORM ── */
+.field-group { margin-bottom: 18px; }
+.field-group label {
+  display: block; font-size: 12px; font-weight: 700; color: var(--navy);
+  margin-bottom: 6px; letter-spacing: 0.4px; text-transform: uppercase;
+}
+.field-hint { font-size: 11.5px; color: var(--text-muted); margin-bottom: 6px; font-style: italic; }
+.field-group input, .field-group select, .field-group textarea {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--cream-dark); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+  background: var(--white); transition: border-color var(--transition); outline: none;
+}
+.field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+  border-color: var(--navy); box-shadow: 0 0 0 3px rgba(26,39,68,0.07);
+}
+.incident-focus input:focus, .incident-focus select:focus, .incident-focus textarea:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px rgba(26,107,107,0.09);
+}
+.field-group textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:520px){ .field-row { grid-template-columns: 1fr; } }
 
-  /* ALERTS */
-  .alert {
-    border-radius: 8px; padding: 14px 18px; font-size: 13.5px;
-    line-height: 1.6; margin-bottom: 20px;
-    display: flex; gap: 12px; align-items: flex-start;
-  }
-  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-  .alert.alert-warn { background: #fff8e6; border: 1px solid #f5c842; }
-  .alert.alert-info { background: #e8f0fb; border: 1px solid #4a7dd4; }
-  .alert.alert-stop { background: #fdecea; border: 1px solid var(--red); }
+/* ── CATEGORY CHIPS ── */
+.category-grid {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;
+}
+.cat-chip {
+  padding: 8px 16px; border-radius: 50px; font-size: 13px;
+  border: 1.5px solid var(--cream-dark); background: var(--white);
+  cursor: pointer; transition: all var(--transition); user-select: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.cat-chip:hover { border-color: var(--teal); color: var(--teal); }
+.cat-chip.selected { background: var(--teal); color: var(--white); border-color: var(--teal); }
+.cat-chip.other-chip.selected { background: var(--navy); border-color: var(--navy); }
 
-  /* BUTTONS */
-  .btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
-  .btn {
-    padding: 11px 24px; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-    cursor: pointer; border: none; transition: all var(--transition);
-    display: inline-flex; align-items: center; gap: 7px;
-  }
-  .btn-primary { background: var(--navy); color: var(--white); }
-  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,39,68,0.25); }
-  .btn-secondary { background: transparent; color: var(--navy); border: 2px solid var(--cream-dark); }
-  .btn-secondary:hover { border-color: var(--navy); background: var(--cream); }
-  .btn-gold { background: var(--gold); color: var(--navy); font-weight: 700; }
-  .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(201,168,76,0.4); }
-  .btn-danger { background: var(--red); color: var(--white); }
-  .btn-danger:hover { background: #a93226; }
+/* ── GUIDANCE / ALERTS ── */
+.guidance {
+  background: var(--cream); border-left: 4px solid var(--gold);
+  border-radius: 0 8px 8px 0; padding: 14px 18px;
+  font-size: 13.5px; color: var(--text); line-height: 1.65; margin-bottom: 22px;
+}
+.guidance.teal-guide { border-left-color: var(--teal); }
+.guidance strong { color: var(--navy); }
+.fields-intro {
+  font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;
+  padding: 11px 16px; background: var(--cream); border-radius: 8px; border-left: 3px solid var(--gold);
+}
+.fields-intro.teal-intro { border-left-color: var(--teal); }
+.question-text { font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.55; margin-bottom: 20px; }
 
-  /* EMAIL PREVIEW */
-  .email-preview {
-    background: var(--cream); border: 1.5px solid var(--cream-dark);
-    border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
-  }
-  .email-preview-header {
-    background: var(--navy); padding: 14px 20px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .email-preview-header span { color: rgba(255,255,255,0.7); font-size: 13px; }
-  .email-preview-header strong { color: var(--white); font-size: 13px; }
-  .email-meta { padding: 14px 20px; border-bottom: 1px solid var(--cream-dark); background: var(--white); }
-  .email-meta-row { display: flex; gap: 8px; font-size: 13px; margin-bottom: 6px; align-items: baseline; }
-  .email-meta-row:last-child { margin-bottom: 0; }
-  .email-meta-row .lbl { color: var(--text-muted); min-width: 54px; font-weight: 500; }
-  .email-meta-row .val { color: var(--text); }
-  .email-body-wrap { padding: 20px; background: var(--white); }
-  .email-body {
-    font-size: 13.5px; line-height: 1.78; color: var(--text);
-    white-space: pre-wrap; font-family: Georgia, 'Times New Roman', serif;
-  }
-  .placeholder {
-    background: #fff3cd; border: 1px dashed #e6a817;
-    border-radius: 3px; padding: 1px 5px;
-    font-style: italic; font-size: 12px; color: #7a5500;
-    font-family: 'DM Sans', sans-serif;
-  }
+.alert { border-radius: 8px; padding: 13px 17px; font-size: 13.5px; line-height: 1.6; margin-bottom: 18px; display: flex; gap: 11px; align-items: flex-start; }
+.alert-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn    { background: #fff8e6; border: 1px solid #f5c842; }
+.alert-info    { background: #e8f0fb; border: 1px solid #4a7dd4; }
+.alert-stop    { background: #fdecea; border: 1px solid var(--red); }
+.alert-teal    { background: var(--teal-pale); border: 1px solid #5dd4d4; }
 
-  .copy-btn {
-    background: none; border: 1.5px solid var(--cream-dark);
-    border-radius: 6px; font-family: 'DM Sans', sans-serif;
-    font-size: 12.5px; color: var(--text-muted); padding: 6px 14px;
-    cursor: pointer; transition: all var(--transition);
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .copy-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--cream); }
-  .copy-btn.copied { border-color: var(--green); color: var(--green); }
+/* ── BUTTONS ── */
+.btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+.btn {
+  padding: 11px 22px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; border: none; transition: all var(--transition);
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-navy     { background: var(--navy); color: var(--white); }
+.btn-navy:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,39,68,0.2); }
+.btn-gold     { background: var(--gold); color: var(--navy); font-weight: 700; }
+.btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+.btn-teal     { background: var(--teal); color: var(--white); font-weight: 600; }
+.btn-teal:hover { background: var(--teal-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,107,107,0.25); }
+.btn-teal-outline { background: transparent; color: var(--teal); border: 2px solid var(--teal); }
+.btn-teal-outline:hover { background: var(--teal-pale); }
+.btn-outline  { background: transparent; color: var(--navy); border: 2px solid var(--cream-dark); }
+.btn-outline:hover { border-color: var(--navy); background: var(--cream); }
+.btn-danger   { background: var(--red); color: var(--white); }
+.btn-danger:hover { background: #a93226; }
 
-  /* CHECKLIST */
-  .checklist { list-style: none; margin: 12px 0; }
-  .checklist li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
-  .checklist li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+/* ── EMAIL PREVIEW ── */
+.email-preview {
+  background: var(--cream); border: 1.5px solid var(--cream-dark);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 18px;
+}
+.email-top {
+  padding: 13px 20px; display: flex; align-items: center; gap: 10px;
+}
+.email-top-complaint { background: var(--navy); }
+.email-top-incident  { background: var(--teal); }
+.email-top span  { color: rgba(255,255,255,0.65); font-size: 13px; }
+.email-top strong { color: var(--white); font-size: 13px; }
+.email-meta { padding: 13px 20px; border-bottom: 1px solid var(--cream-dark); background: var(--white); }
+.email-meta-row { display: flex; gap: 8px; font-size: 13px; margin-bottom: 5px; align-items: baseline; }
+.email-meta-row:last-child { margin-bottom: 0; }
+.email-meta-row .lbl { color: var(--text-muted); min-width: 54px; font-weight: 600; }
+.email-body-wrap { padding: 20px; background: var(--white); }
+.email-body {
+  font-size: 13.5px; line-height: 1.78; color: var(--text);
+  white-space: pre-wrap; font-family: Georgia,'Times New Roman',serif;
+}
+.placeholder {
+  background: #fff3cd; border: 1px dashed #e6a817;
+  border-radius: 3px; padding: 1px 5px;
+  font-style: italic; font-size: 12px; color: #7a5500;
+  font-family: 'DM Sans', sans-serif;
+}
+.copy-btn {
+  background: none; border: 1.5px solid var(--cream-dark); border-radius: 6px;
+  font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: var(--text-muted);
+  padding: 6px 14px; cursor: pointer; transition: all var(--transition);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.copy-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--cream); }
+.copy-btn.copied { border-color: var(--green); color: var(--green); }
 
-  /* OUTCOME */
-  .outcome-card { border-radius: var(--radius); padding: 28px; text-align: center; display: none; animation: fadeSlideIn 0.38s ease both; }
-  .outcome-card.active { display: block; }
-  .outcome-card .outcome-icon { font-size: 48px; margin-bottom: 14px; }
-  .outcome-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 10px; }
-  .outcome-card p { font-size: 14px; line-height: 1.7; color: var(--text-muted); max-width: 500px; margin: 0 auto 20px; }
-  .outcome-card.outcome-go { background: var(--white); box-shadow: var(--shadow); border: 2px solid var(--gold); }
-  .outcome-card.outcome-go h3 { color: var(--navy); }
+/* ── PDF ACTIONS ── */
+.pdf-action-row {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  align-items: center; margin-bottom: 18px;
+}
+.pdf-btn {
+  background: #fdecea; border: 1.5px solid #e8b4af; border-radius: 6px;
+  font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: #922b21;
+  padding: 6px 16px; cursor: pointer; font-weight: 600;
+  transition: all var(--transition); display: inline-flex; align-items: center; gap: 6px;
+}
+.pdf-btn:hover { background: #f5b7b1; border-color: var(--red); }
 
-  .restart-wrap { text-align: center; margin-top: 24px; }
-  .restart-btn { background: none; border: none; color: var(--text-muted); font-size: 12.5px; cursor: pointer; text-decoration: underline; font-family: 'DM Sans', sans-serif; }
-  .restart-btn:hover { color: var(--navy); }
+/* ── CHECKLIST ── */
+.checklist { list-style: none; margin: 10px 0; }
+.checklist li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; margin-bottom: 8px; line-height: 1.5; }
+.checklist li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
 
-  /* PRIVACY NOTICE */
-  .privacy-notice {
-    background: #f0f4ff;
-    border-bottom: 1px solid #c8d5f5;
-    padding: 10px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 12.5px;
-    color: #3a4a7a;
-    text-align: center;
-    line-height: 1.5;
-  }
-  .privacy-notice .lock-icon { font-size: 15px; flex-shrink: 0; }
+/* ── OUTCOME ── */
+.outcome-card { border-radius: var(--radius); padding: 32px; text-align: center; display: none; animation: fadeUp 0.36s ease both; }
+.outcome-card.active { display: block; }
+.outcome-card .outcome-icon { font-size: 48px; margin-bottom: 14px; }
+.outcome-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 10px; }
+.outcome-card p { font-size: 14px; line-height: 1.7; color: var(--text-muted); max-width: 500px; margin: 0 auto 20px; }
+.outcome-complaint { background: var(--white); box-shadow: var(--shadow); border: 2px solid var(--gold); }
+.outcome-complaint h3 { color: var(--navy); }
+.outcome-incident  { background: var(--white); box-shadow: var(--shadow); border: 2px solid #5dd4d4; }
+.outcome-incident h3 { color: var(--teal); }
 
-  /* FOOTER */
-  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--cream-dark); line-height: 1.9; }
-  footer a { color: var(--navy); text-decoration: underline; }
-  footer a:hover { color: var(--gold); }
+.restart-wrap { text-align: center; margin-top: 20px; }
+.restart-btn { background: none; border: none; color: var(--text-muted); font-size: 12.5px; cursor: pointer; text-decoration: underline; font-family: 'DM Sans', sans-serif; }
+.restart-btn:hover { color: var(--navy); }
 
-  @media (max-width: 480px) {
-    .btn-group { flex-direction: column; }
-    .btn { width: 100%; justify-content: center; }
-    .step-body { padding: 20px 18px; }
-  }
+/* ── FOOTER ── */
+footer {
+  text-align: center; padding: 22px 24px; font-size: 12px;
+  color: var(--text-muted); border-top: 1px solid var(--cream-dark); line-height: 2;
+}
+footer a { color: var(--navy); text-decoration: underline; }
+footer a:hover { color: var(--gold); }
+
+@media(max-width:480px){
+  .btn-group { flex-direction: column; }
+  .btn { width: 100%; justify-content: center; }
+  .step-body { padding: 20px 16px; }
+  .tab-btn { padding: 13px 18px; font-size: 13px; }
+}
 </style>
 </head>
 <body>
 
+<!-- ════════════════════════════════════════════════
+     SHARED HEADER + TAB BAR
+════════════════════════════════════════════════ -->
 <header>
-  <div class="header-badge">Official Policy Guide</div>
-  <h1>River Valley Charter School<br>Complaint Process</h1>
-  <p>This guide will help you determine the correct next step in filing a complaint and help you prepare your formal written submission.</p>
+  <div class="header-inner">
+    <div class="header-badge">Community Portal</div>
+    <h1>River Valley Charter School</h1>
+    <p class="subtitle">Official complaint and incident reporting guides</p>
+    <div class="tab-bar">
+      <button class="tab-btn" id="tab-complaint" onclick="switchTab('complaint')">📋 Complaint Process</button>
+      <button class="tab-btn" id="tab-incident"  onclick="switchTab('incident')">🚨 Report an Incident</button>
+    </div>
+  </div>
 </header>
-<div class="policy-note">Based on <strong>RVCS Complaint Policy (Revised May 2015)</strong> — complaints should be resolved as close to their source as possible.</div>
 
-<div class="privacy-notice">
-  <span class="lock-icon">🔒</span>
-  <span><strong>Your privacy is protected.</strong> This page does not collect, store, or transmit any information you enter. Everything stays entirely in your browser and is cleared when you close or refresh the page.</span>
-</div>
 
-<div id="draft-bar">
-  <div class="draft-dot"></div>
-  <span>Building your complaint submission — answers are held in your browser only and never sent anywhere</span>
-</div>
+<!-- ════════════════════════════════════════════════
+     COMPLAINT PAGE
+════════════════════════════════════════════════ -->
+<div class="page-panel" id="page-complaint">
 
-<main>
-  <div class="progress-header">
-    <span class="progress-label" id="progressLabel">Getting started</span>
-    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+  <div class="subband subband-complaint">Based on <strong>RVCS Complaint Policy (Revised May 2015)</strong> — complaints should be resolved as close to their source as possible.</div>
+
+  <div class="privacy-notice">
+    🔒 <strong>Your privacy is protected.</strong> This page does not collect, store, or transmit any information. Everything stays in your browser and is cleared when you close or refresh the page.
   </div>
 
-  <!-- ================================================ -->
-  <!-- SCREEN 0: START -->
-  <!-- ================================================ -->
-  <div class="step-card active" id="screen-0">
-    <div class="step-card-header">
-      <div class="step-num">?</div>
-      <div>
-        <h2>Before You Begin</h2>
-        <p>Let's gather some basic information and find the right path</p>
-      </div>
-    </div>
-    <div class="step-body">
-      <div class="guidance">
-        The RVCS Complaint Policy requires all complaints be <strong>resolved as close to their source as possible</strong>. You must attempt direct resolution before escalating. This guide walks you through each required step and builds your formal submission along the way.
-      </div>
-      <p class="fields-intro">✏️ We'll collect details as you go to draft your formal written complaint. Start by telling us about yourself.</p>
-      <div class="field-row">
-        <div class="field-group">
-          <label>Your Full Name</label>
-          <input type="text" id="f-yourname" placeholder="e.g. Jane Smith" oninput="save()">
-        </div>
-        <div class="field-group">
-          <label>Your Email Address</label>
-          <input type="email" id="f-youremail" placeholder="e.g. jane@email.com" oninput="save()">
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field-group">
-          <label>Student's Name</label>
-          <input type="text" id="f-studentname" placeholder="e.g. Alex Smith" oninput="save()">
-        </div>
-        <div class="field-group">
-          <label>Grade / Class</label>
-          <input type="text" id="f-grade" placeholder="e.g. Grade 4" oninput="save()">
-        </div>
-      </div>
-      <p class="question-text" style="margin-top:8px;">What is the nature of your complaint?</p>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="setCategory('student'); go('screen-1')">📚 Student / classroom / teacher</button>
-        <button class="btn btn-primary" onclick="setCategory('policy'); go('screen-1')">🏫 School policy or administration</button>
-        <button class="btn btn-primary" onclick="setCategory('employment'); go('screen-employee')">👤 Employment or a staff member</button>
-      </div>
-    </div>
+  <div class="draft-bar draft-bar-complaint" id="cdraft-bar">
+    <div class="draft-dot"></div>
+    <span>Building your complaint submission — answers are held in your browser only and never sent anywhere</span>
   </div>
 
-  <!-- ================================================ -->
-  <!-- SCREEN: EMPLOYMENT NOTE -->
-  <!-- ================================================ -->
-  <div class="step-card" id="screen-employee">
-    <div class="step-card-header">
-      <div class="step-num">!</div>
-      <div><h2>Important: Employment-Related Complaints</h2><p>Please read before proceeding</p></div>
+  <main>
+    <div class="progress-header">
+      <span class="progress-label" id="c-prog-label">Getting started</span>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="c-prog-bar"></div></div>
     </div>
-    <div class="step-body">
-      <div class="alert alert-warn">
-        <span class="alert-icon">⚠️</span>
-        <div>The <strong>School Director holds primary responsibility</strong> for the oversight and management of all school staff. The Board of Trustees does not directly manage hiring, firing, or day-to-day employment (except for the Director). The Complaint Committee may refer employment issues back to the Director.</div>
-      </div>
-      <p class="question-text">Would you like to continue with the standard complaint process, keeping this in mind?</p>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="go('screen-1')">Yes, continue with the complaint process</button>
-        <button class="btn btn-secondary" onclick="go('screen-0')">← Go back</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- ================================================ -->
-  <!-- SCREEN 1: Have you spoken directly? -->
-  <!-- ================================================ -->
-  <div class="step-card" id="screen-1">
-    <div class="step-card-header">
-      <div class="step-num">1</div>
-      <div><h2>Step One: Direct Contact</h2><p>The first required step in the complaint process</p></div>
-    </div>
-    <div class="step-body">
-      <div class="guidance">
-        <strong>Policy requirement:</strong> You must first contact those directly involved. For student concerns, begin by speaking with the <strong>head teacher</strong>. Communicate the complaint clearly and identify actions that could lead to resolution.
+    <!-- SCREEN 0: Start -->
+    <div class="step-card active" id="cs-0">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">?</div>
+        <div><h2>Before You Begin</h2><p>Let's gather some basic information and find the right path</p></div>
       </div>
-      <p class="question-text">Have you already spoken directly with the person involved (e.g., the head teacher or the individual responsible for the issue)?</p>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="go('screen-1b')">✅ Yes, I have spoken with them</button>
-        <button class="btn btn-secondary" onclick="go('screen-1-action')">❌ No, I have not yet</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 1 – Action required -->
-  <div class="step-card" id="screen-1-action">
-    <div class="step-card-header">
-      <div class="step-num">1</div>
-      <div><h2>Action Required: Contact Directly</h2><p>You must complete this step first</p></div>
-    </div>
-    <div class="step-body">
-      <div class="alert alert-stop">
-        <span class="alert-icon">🛑</span>
-        <div>You <strong>cannot skip Step One</strong>. The policy requires direct communication before escalating. The Complaint Committee will not review a case unless Steps One and Two are documented.</div>
-      </div>
-      <ul class="checklist">
-        <li>For student/classroom concerns — speak with the <strong>head teacher</strong>.</li>
-        <li>Communicate your complaint as clearly as possible.</li>
-        <li>Identify specific actions that would resolve the issue.</li>
-        <li>Work cooperatively toward a resolution.</li>
-        <li>Keep written notes of all conversations and dates.</li>
-      </ul>
-      <div class="alert alert-info">
-        <span class="alert-icon">💡</span>
-        <div>Once you have completed Step One, return here to continue and record what happened.</div>
-      </div>
-      <div class="btn-group">
-        <button class="btn btn-gold" onclick="go('screen-1')">↩ Return after completing Step One</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 1b – Record details -->
-  <div class="step-card" id="screen-1b">
-    <div class="step-card-header">
-      <div class="step-num">1</div>
-      <div><h2>Step One: Record the Details</h2><p>This will be included in your formal submission</p></div>
-    </div>
-    <div class="step-body">
-      <p class="fields-intro">✏️ Record the details of your direct conversation. Your formal written complaint <strong>must document this step</strong> clearly.</p>
-      <div class="field-row">
-        <div class="field-group">
-          <label>Who did you speak with?</label>
-          <input type="text" id="f-s1-who" placeholder="e.g. Ms. Johnson (Head Teacher)" oninput="save()">
+      <div class="step-body">
+        <div class="guidance">
+          The RVCS Complaint Policy requires all complaints be <strong>resolved as close to their source as possible</strong>. You must attempt direct resolution before escalating. This guide walks you through each required step and builds your formal submission along the way.
         </div>
-        <div class="field-group">
-          <label>Date of conversation</label>
-          <input type="date" id="f-s1-date" oninput="save()">
+        <p class="fields-intro">✏️ We'll collect details as you go to draft your formal written complaint. Start by telling us about yourself.</p>
+        <div class="field-row">
+          <div class="field-group"><label>Your Full Name</label><input type="text" id="c-name" placeholder="e.g. Jane Smith" oninput="csave()"></div>
+          <div class="field-group"><label>Your Email Address</label><input type="email" id="c-email" placeholder="e.g. jane@email.com" oninput="csave()"></div>
         </div>
-      </div>
-      <div class="field-group">
-        <label>What was discussed?</label>
-        <div class="field-hint">Briefly describe the complaint you raised and what was said.</div>
-        <textarea id="f-s1-discussed" placeholder="e.g. I raised concerns about my child's reading group placement and the lack of communication about the change…" oninput="save()"></textarea>
-      </div>
-      <div class="field-group">
-        <label>Outcome of the conversation</label>
-        <div class="field-hint">What was agreed, promised, or left unresolved?</div>
-        <textarea id="f-s1-outcome" placeholder="e.g. The teacher agreed to look into it but no follow-up was received…" oninput="save()"></textarea>
-      </div>
-      <p class="question-text" style="margin-top:4px;">Was your complaint resolved through this direct contact?</p>
-      <div class="btn-group">
-        <button class="btn btn-gold" onclick="go('screen-resolved')">✅ Yes — it was resolved!</button>
-        <button class="btn btn-primary" onclick="go('screen-2')">❌ No — still unresolved, move to Step Two</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================================================ -->
-  <!-- SCREEN 2: Director -->
-  <!-- ================================================ -->
-  <div class="step-card" id="screen-2">
-    <div class="step-card-header">
-      <div class="step-num">2</div>
-      <div><h2>Step Two: School Director</h2><p>Escalating to the Director of RVCS</p></div>
-    </div>
-    <div class="step-body">
-      <div class="guidance">
-        <strong>Policy requirement:</strong> Speak with the <strong>Director of River Valley Charter School</strong> and develop a plan to resolve the issue. Allow the Director reasonable time to bring a solution to bear before escalating further.
-      </div>
-      <p class="question-text">Have you already spoken with the School Director about this complaint?</p>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="go('screen-2b')">✅ Yes, I have spoken with the Director</button>
-        <button class="btn btn-secondary" onclick="go('screen-2-action')">❌ No, I have not yet</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 2 – Action required -->
-  <div class="step-card" id="screen-2-action">
-    <div class="step-card-header">
-      <div class="step-num">2</div>
-      <div><h2>Action Required: Contact the Director</h2><p>Complete Step Two before proceeding</p></div>
-    </div>
-    <div class="step-body">
-      <div class="alert alert-stop">
-        <span class="alert-icon">🛑</span>
-        <div>You must speak with the <strong>School Director</strong> before contacting the Board. The Complaint Committee requires documented evidence that Steps One and Two were completed.</div>
-      </div>
-      <ul class="checklist">
-        <li>Contact the Director to schedule a meeting.</li>
-        <li>Explain the complaint and describe your Step One efforts.</li>
-        <li>Work together to develop a resolution plan.</li>
-        <li>Allow reasonable time for the plan to be implemented.</li>
-        <li>Document all meetings, dates, and agreed actions in writing.</li>
-      </ul>
-      <div class="btn-group">
-        <button class="btn btn-gold" onclick="go('screen-2')">↩ Return after completing Step Two</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 2b – Record details -->
-  <div class="step-card" id="screen-2b">
-    <div class="step-card-header">
-      <div class="step-num">2</div>
-      <div><h2>Step Two: Record the Details</h2><p>This will be included in your formal submission</p></div>
-    </div>
-    <div class="step-body">
-      <p class="fields-intro">✏️ Record the details of your meeting with the Director. Your formal written complaint <strong>must document this step</strong>.</p>
-      <div class="field-row">
-        <div class="field-group">
-          <label>Date of meeting with Director</label>
-          <input type="date" id="f-s2-date" oninput="save()">
+        <div class="field-row">
+          <div class="field-group"><label>Student's Name</label><input type="text" id="c-student" placeholder="e.g. Alex Smith" oninput="csave()"></div>
+          <div class="field-group"><label>Grade / Class</label><input type="text" id="c-grade" placeholder="e.g. Grade 4" oninput="csave()"></div>
         </div>
-        <div class="field-group">
-          <label>Additional dates (if multiple meetings)</label>
-          <input type="text" id="f-s2-dates-extra" placeholder="e.g. March 5, March 12" oninput="save()">
-        </div>
-      </div>
-      <div class="field-group">
-        <label>What resolution plan was developed?</label>
-        <div class="field-hint">What did the Director agree to do or put in place?</div>
-        <textarea id="f-s2-plan" placeholder="e.g. The Director agreed to arrange a meeting between myself and the teacher and to review placement criteria…" oninput="save()"></textarea>
-      </div>
-      <div class="field-group">
-        <label>Why is the complaint still unresolved?</label>
-        <div class="field-hint">What happened — or failed to happen — after your Director meeting(s)?</div>
-        <textarea id="f-s2-why" placeholder="e.g. The promised meeting never took place. After two weeks I followed up but received no response…" oninput="save()"></textarea>
-      </div>
-      <p class="question-text" style="margin-top:4px;">Has the Director resolved your complaint?</p>
-      <div class="btn-group">
-        <button class="btn btn-gold" onclick="go('screen-resolved')">✅ Yes — the Director resolved it!</button>
-        <button class="btn btn-primary" onclick="go('screen-3')">❌ No — still unresolved, move to Step Three</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================================================ -->
-  <!-- SCREEN 3: Describe complaint + generate email -->
-  <!-- ================================================ -->
-  <div class="step-card" id="screen-3">
-    <div class="step-card-header">
-      <div class="step-num">3</div>
-      <div><h2>Step Three: Formal Written Submission</h2><p>Notifying the Chair of the Board of Trustees</p></div>
-    </div>
-    <div class="step-body">
-      <div class="guidance">
-        <strong>Policy requirement:</strong> Notify the <strong>Chair of the Board of Trustees</strong> with a formal written report. Your report must clearly document your Step One and Step Two efforts. All named parties will receive a copy.
-      </div>
-
-      <p class="fields-intro">✏️ Complete the fields below — we'll generate your ready-to-send complaint email from your answers.</p>
-
-      <div class="field-group">
-        <label>Description of the complaint</label>
-        <div class="field-hint">Describe the specific issue clearly and factually. Include relevant dates, people involved, and key events.</div>
-        <textarea id="f-complaint" rows="5" placeholder="e.g. On January 15, my child was removed from the advanced reading group without explanation. Despite multiple requests for clarification, no satisfactory reason has been provided and my child's academic progress has been negatively affected…" oninput="save()"></textarea>
-      </div>
-      <div class="field-group">
-        <label>Resolution you are seeking</label>
-        <div class="field-hint">What specific outcome would resolve this complaint to your satisfaction?</div>
-        <textarea id="f-resolution" rows="3" placeholder="e.g. I am requesting that my child be reinstated in the advanced reading group and that a formal meeting be held to review the criteria used for group placement decisions…" oninput="save()"></textarea>
-      </div>
-
-      <div class="btn-group" style="margin-top:8px;">
-        <button class="btn btn-gold" onclick="generateEmail()">✉️ Generate My Submission Email</button>
-      </div>
-
-      <!-- Generated Email Output -->
-      <div id="email-output" style="display:none; margin-top:32px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-          <strong style="font-size:14px; color:var(--navy);">📧 Your Formal Complaint Email</strong>
-          <button class="copy-btn" id="copy-btn" onclick="copyEmail()">📋 Copy to clipboard</button>
-        </div>
-
-        <div class="email-preview">
-          <div class="email-preview-header">
-            <span>To:</span>
-            <strong>Chair of the Board of Trustees, River Valley Charter School</strong>
-          </div>
-          <div class="email-meta">
-            <div class="email-meta-row"><span class="lbl">From:</span><span class="val" id="em-from">—</span></div>
-            <div class="email-meta-row"><span class="lbl">Subject:</span><span class="val" id="em-subject">—</span></div>
-            <div class="email-meta-row"><span class="lbl">Date:</span><span class="val" id="em-date">—</span></div>
-          </div>
-          <div class="email-body-wrap">
-            <div class="email-body" id="em-body"></div>
-          </div>
-        </div>
-
-        <div class="alert alert-warn" style="margin-bottom:20px;">
-          <span class="alert-icon">⚠️</span>
-          <div>Review the email carefully before sending. Fields shown in <span style="background:#fff3cd;border:1px dashed #e6a817;border-radius:3px;padding:1px 5px;font-size:11.5px;font-style:italic;">dashed yellow</span> indicate information that was not filled in above — update it before sending. All parties named in your complaint will receive a copy.</div>
-        </div>
-
+        <p class="question-text" style="margin-top:8px;">What is the nature of your complaint?</p>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="go('screen-4')">I have sent my submission →</button>
-          <button class="btn btn-secondary" onclick="generateEmail()">🔄 Regenerate email</button>
+          <button class="btn btn-navy" onclick="cSetCat('student'); cGo('cs-1')">📚 Student / classroom / teacher</button>
+          <button class="btn btn-navy" onclick="cSetCat('policy'); cGo('cs-1')">🏫 School policy or administration</button>
+          <button class="btn btn-navy" onclick="cSetCat('employment'); cGo('cs-emp')">👤 Employment or a staff member</button>
         </div>
       </div>
-
     </div>
+
+    <!-- Employment note -->
+    <div class="step-card" id="cs-emp">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">!</div>
+        <div><h2>Important: Employment-Related Complaints</h2><p>Please read before proceeding</p></div>
+      </div>
+      <div class="step-body">
+        <div class="alert alert-warn"><span class="alert-icon">⚠️</span><div>The <strong>School Director holds primary responsibility</strong> for the oversight and management of all school staff. The Board of Trustees does not directly manage hiring, firing, or day-to-day employment (except for the Director). The Complaint Committee may refer employment issues back to the Director.</div></div>
+        <p class="question-text">Would you like to continue with the standard complaint process?</p>
+        <div class="btn-group">
+          <button class="btn btn-navy" onclick="cGo('cs-1')">Yes, continue</button>
+          <button class="btn btn-outline" onclick="cGo('cs-0')">← Go back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-card" id="cs-1">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">1</div>
+        <div><h2>Step One: Direct Contact</h2><p>The first required step in the complaint process</p></div>
+      </div>
+      <div class="step-body">
+        <div class="guidance"><strong>Policy requirement:</strong> You must first contact those directly involved. For student concerns, begin by speaking with the <strong>head teacher</strong>. Communicate the complaint clearly and identify actions that could lead to resolution.</div>
+        <p class="question-text">Have you already spoken directly with the person involved?</p>
+        <div class="btn-group">
+          <button class="btn btn-navy" onclick="cGo('cs-1b')">✅ Yes, I have spoken with them</button>
+          <button class="btn btn-outline" onclick="cGo('cs-1-stop')">❌ No, I have not yet</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" id="cs-1-stop">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">1</div>
+        <div><h2>Action Required: Contact Directly</h2><p>You must complete this step first</p></div>
+      </div>
+      <div class="step-body">
+        <div class="alert alert-stop"><span class="alert-icon">🛑</span><div>You <strong>cannot skip Step One</strong>. The Complaint Committee will not review a case unless Steps One and Two are documented.</div></div>
+        <ul class="checklist">
+          <li>For student/classroom concerns — speak with the <strong>head teacher</strong>.</li>
+          <li>Communicate your complaint as clearly as possible.</li>
+          <li>Identify specific actions that would resolve the issue.</li>
+          <li>Keep written notes of all conversations and dates.</li>
+        </ul>
+        <div class="btn-group"><button class="btn btn-gold" onclick="cGo('cs-1')">↩ Return after completing Step One</button></div>
+      </div>
+    </div>
+
+    <div class="step-card" id="cs-1b">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">1</div>
+        <div><h2>Step One: Record the Details</h2><p>This will be included in your formal submission</p></div>
+      </div>
+      <div class="step-body">
+        <p class="fields-intro">✏️ Record the details of your direct conversation. Your formal written complaint <strong>must document this step</strong>.</p>
+        <div class="field-row">
+          <div class="field-group"><label>Who did you speak with?</label><input type="text" id="c-s1-who" placeholder="e.g. Ms. Johnson (Head Teacher)" oninput="csave()"></div>
+          <div class="field-group"><label>Date of conversation</label><input type="date" id="c-s1-date" oninput="csave()"></div>
+        </div>
+        <div class="field-group"><label>What was discussed?</label><textarea id="c-s1-discussed" placeholder="e.g. I raised concerns about my child's reading group placement…" oninput="csave()"></textarea></div>
+        <div class="field-group"><label>Outcome of the conversation</label><textarea id="c-s1-outcome" placeholder="e.g. The teacher agreed to look into it but no follow-up was received…" oninput="csave()"></textarea></div>
+        <p class="question-text" style="margin-top:4px;">Was your complaint resolved?</p>
+        <div class="btn-group">
+          <button class="btn btn-gold" onclick="cGo('cs-resolved')">✅ Yes — it was resolved!</button>
+          <button class="btn btn-navy" onclick="cGo('cs-2')">❌ No — move to Step Two</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card" id="cs-2">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">2</div>
+        <div><h2>Step Two: School Director</h2><p>Escalating to the Director of RVCS</p></div>
+      </div>
+      <div class="step-body">
+        <div class="guidance"><strong>Policy requirement:</strong> Speak with the <strong>Director of River Valley Charter School</strong> and develop a plan to resolve the issue. Allow the Director reasonable time to act.</div>
+        <p class="question-text">Have you spoken with the School Director about this complaint?</p>
+        <div class="btn-group">
+          <button class="btn btn-navy" onclick="cGo('cs-2b')">✅ Yes, I have spoken with the Director</button>
+          <button class="btn btn-outline" onclick="cGo('cs-2-stop')">❌ No, I have not yet</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" id="cs-2-stop">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">2</div>
+        <div><h2>Action Required: Contact the Director</h2><p>Complete Step Two before proceeding</p></div>
+      </div>
+      <div class="step-body">
+        <div class="alert alert-stop"><span class="alert-icon">🛑</span><div>You must speak with the <strong>School Director</strong> before contacting the Board. The Complaint Committee requires documented evidence that Steps One and Two were completed.</div></div>
+        <ul class="checklist">
+          <li>Contact the Director to schedule a meeting.</li>
+          <li>Explain the complaint and describe your Step One efforts.</li>
+          <li>Work together to develop a resolution plan.</li>
+          <li>Document all meetings, dates, and agreed actions.</li>
+        </ul>
+        <div class="btn-group"><button class="btn btn-gold" onclick="cGo('cs-2')">↩ Return after completing Step Two</button></div>
+      </div>
+    </div>
+
+    <div class="step-card" id="cs-2b">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">2</div>
+        <div><h2>Step Two: Record the Details</h2><p>This will be included in your formal submission</p></div>
+      </div>
+      <div class="step-body">
+        <p class="fields-intro">✏️ Record the details of your meeting with the Director. Your formal written complaint <strong>must document this step</strong>.</p>
+        <div class="field-row">
+          <div class="field-group"><label>Date of meeting with Director</label><input type="date" id="c-s2-date" oninput="csave()"></div>
+          <div class="field-group"><label>Additional dates (if multiple meetings)</label><input type="text" id="c-s2-extra" placeholder="e.g. March 5, March 12" oninput="csave()"></div>
+        </div>
+        <div class="field-group"><label>What resolution plan was developed?</label><textarea id="c-s2-plan" placeholder="e.g. The Director agreed to arrange a meeting…" oninput="csave()"></textarea></div>
+        <div class="field-group"><label>Why is the complaint still unresolved?</label><textarea id="c-s2-why" placeholder="e.g. The promised meeting never took place…" oninput="csave()"></textarea></div>
+        <p class="question-text" style="margin-top:4px;">Has the Director resolved your complaint?</p>
+        <div class="btn-group">
+          <button class="btn btn-gold" onclick="cGo('cs-resolved')">✅ Yes — resolved!</button>
+          <button class="btn btn-navy" onclick="cGo('cs-3')">❌ No — move to Step Three</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Generate Email -->
+    <div class="step-card" id="cs-3">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">3</div>
+        <div><h2>Step Three: Formal Written Submission</h2><p>Notifying the Chair of the Board of Trustees</p></div>
+      </div>
+      <div class="step-body">
+        <div class="guidance"><strong>Policy requirement:</strong> Notify the <strong>Chair of the Board of Trustees</strong> with a formal written report documenting your Step One and Step Two efforts. All named parties will receive a copy.</div>
+        <p class="fields-intro">✏️ Complete the fields below — we'll generate your ready-to-send complaint email.</p>
+        <div class="field-group"><label>Description of the complaint</label><div class="field-hint">Describe the specific issue clearly and factually. Include relevant dates, people involved, and key events.</div><textarea id="c-complaint" rows="5" placeholder="e.g. On January 15, my child was removed from the advanced reading group without explanation…" oninput="csave()"></textarea></div>
+        <div class="field-group"><label>Resolution you are seeking</label><div class="field-hint">What specific outcome would resolve this complaint?</div><textarea id="c-resolution" rows="3" placeholder="e.g. I am requesting that my child be reinstated and a formal meeting be held…" oninput="csave()"></textarea></div>
+        <div class="btn-group"><button class="btn btn-gold" onclick="cGenEmail()">✉️ Generate My Submission Email</button></div>
+
+        <div id="c-email-out" style="display:none;margin-top:28px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <strong style="font-size:14px;color:var(--navy);">📧 Your Formal Complaint Email</strong>
+            <button class="copy-btn" id="c-copy-btn" onclick="cCopyEmail()">📋 Copy to clipboard</button>
+          </div>
+          <div class="email-preview">
+            <div class="email-top email-top-complaint"><span>To: </span><strong>Chair of the Board of Trustees, RVCS</strong></div>
+            <div class="email-meta">
+              <div class="email-meta-row"><span class="lbl">From:</span><span id="c-em-from">—</span></div>
+              <div class="email-meta-row"><span class="lbl">Subject:</span><span id="c-em-subject">—</span></div>
+              <div class="email-meta-row"><span class="lbl">Date:</span><span id="c-em-date">—</span></div>
+            </div>
+            <div class="email-body-wrap"><div class="email-body" id="c-em-body"></div></div>
+          </div>
+          <div class="alert alert-warn" style="margin-bottom:16px;"><span class="alert-icon">⚠️</span><div>Review carefully before sending. <span style="background:#fff3cd;border:1px dashed #e6a817;border-radius:3px;padding:1px 5px;font-size:11.5px;font-style:italic;">Dashed yellow fields</span> indicate missing information. All named parties will receive a copy.</div></div>
+          <div class="btn-group">
+            <button class="btn btn-navy" onclick="cGo('cs-4')">I have sent my submission →</button>
+            <button class="btn btn-outline" onclick="cGenEmail()">🔄 Regenerate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-card" id="cs-4">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">4</div>
+        <div><h2>Step Four: Complaint Committee Review</h2><p>The Board's Complaint Committee will review your case</p></div>
+      </div>
+      <div class="step-body">
+        <div class="guidance"><strong>Policy:</strong> The Committee provides an <strong>initial response within 10 days</strong> and aims to issue a final report <strong>within 30 days</strong>.</div>
+        <ul class="checklist">
+          <li>The Committee may return your complaint to the Director level if more can be done there.</li>
+          <li>If Steps One and Two are exhausted, meetings will be scheduled with all parties.</li>
+          <li>A formal written response will be issued at the conclusion of the process.</li>
+        </ul>
+        <div class="btn-group">
+          <button class="btn btn-navy" onclick="cGo('cs-5')">The Committee has issued its final report →</button>
+          <button class="btn btn-outline" onclick="cGo('cs-4-wait')">The Committee returned my case to an earlier step</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" id="cs-4-wait">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">4</div>
+        <div><h2>Returned to Earlier Step</h2><p>More effort needed at the Director level</p></div>
+      </div>
+      <div class="step-body">
+        <div class="alert alert-warn"><span class="alert-icon">↩️</span><div>The Committee determined more effort can reasonably be made at the <strong>staff or Director level</strong>.</div></div>
+        <ul class="checklist">
+          <li>Follow the Committee's guidance on additional steps.</li>
+          <li>Re-engage with the Director and document all new efforts.</li>
+          <li>If still unresolved, re-submit with updated documentation.</li>
+        </ul>
+        <div class="btn-group"><button class="btn btn-gold" onclick="cGo('cs-4')">↩ Return to Step Four when ready</button></div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-card" id="cs-5">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">5</div>
+        <div><h2>Step Five: Board Report &amp; Final Decision</h2><p>The final stage of the internal process</p></div>
+      </div>
+      <div class="step-body">
+        <div class="guidance">After issuing its final report, the Complaint Committee presents an <strong>executive summary</strong> to the full Board of Trustees. The Board may vote on any policy or action items.</div>
+        <p class="question-text">Are you satisfied with the outcome?</p>
+        <div class="btn-group">
+          <button class="btn btn-gold" onclick="cGo('cs-resolved')">✅ Yes — resolved</button>
+          <button class="btn btn-danger" onclick="cGo('cs-escalate')">❌ No — not satisfied</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escalate -->
+    <div class="step-card" id="cs-escalate">
+      <div class="card-header card-header-complaint">
+        <div class="step-num step-num-complaint">!</div>
+        <div><h2>External Escalation: Commissioner of Education</h2><p>Beyond the school's internal process</p></div>
+      </div>
+      <div class="step-body">
+        <div class="alert alert-info"><span class="alert-icon">🏛️</span><div>You have the right to submit your complaint in writing to the <strong>Commissioner of Education</strong>.</div></div>
+        <ul class="checklist">
+          <li>Submit your complaint in writing to the Massachusetts Commissioner of Education.</li>
+          <li>Include all documentation from the internal process (Steps 1–5).</li>
+          <li>Reference <strong>M.G.L. c. 71 section 89</strong> and <strong>603 CMR 1.00</strong>.</li>
+          <li>Request copies of these laws from River Valley Charter School.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Resolved -->
+    <div class="outcome-card outcome-complaint" id="cs-resolved">
+      <div class="outcome-icon">🎉</div>
+      <h3>Complaint Resolved</h3>
+      <p>We're glad your complaint has been resolved. The RVCS Complaint Policy is designed to find solutions that work for the whole school community.</p>
+      <div class="restart-wrap"><button class="restart-btn" onclick="cRestart()">Start over for a new complaint</button></div>
+    </div>
+
+    <div class="restart-wrap" id="c-restart-wrap" style="display:none;">
+      <button class="restart-btn" onclick="cRestart()">← Start over</button>
+    </div>
+
+  </main>
+</div><!-- /page-complaint -->
+
+
+<!-- ════════════════════════════════════════════════
+     INCIDENT PAGE
+════════════════════════════════════════════════ -->
+<div class="page-panel" id="page-incident">
+
+  <div class="subband subband-incident">Use this form to report a <strong>community incident</strong> — your submission will be sent to the community liaison for review.</div>
+
+  <div class="privacy-notice teal-privacy">
+    🔒 <strong>Your privacy is protected.</strong> This page does not collect, store, or transmit any information. Everything stays in your browser and is cleared when you close or refresh the page.
   </div>
 
-  <!-- ================================================ -->
-  <!-- SCREEN 4: Committee Review -->
-  <!-- ================================================ -->
-  <div class="step-card" id="screen-4">
-    <div class="step-card-header">
-      <div class="step-num">4</div>
-      <div><h2>Step Four: Complaint Committee Review</h2><p>The Board's Complaint Committee will review your case</p></div>
-    </div>
-    <div class="step-body">
-      <div class="guidance">
-        The Complaint Committee (Board Trustees including at least one officer) will review your written report. They provide an <strong>initial response within 10 days</strong> and aim to issue a final report <strong>within 30 days</strong>.
-      </div>
-      <ul class="checklist">
-        <li>The Committee may return your complaint to the Director level if more can be done there.</li>
-        <li>If Steps One and Two are exhausted, the Committee will schedule meetings with all parties.</li>
-        <li>Meetings aim to gather information, identify points of conflict, and find solutions.</li>
-        <li>The Committee may schedule a joint mediation meeting, or issue its own conclusions.</li>
-        <li>A formal written response will be issued at the conclusion of the process.</li>
-      </ul>
-      <div class="alert alert-info">
-        <span class="alert-icon">⏱️</span>
-        <div><strong>Initial response:</strong> within 10 days &nbsp;|&nbsp; <strong>Final report:</strong> within ~30 days (each case varies).</div>
-      </div>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="go('screen-5')">The Committee has issued its final report →</button>
-        <button class="btn btn-secondary" onclick="go('screen-4-wait')">The Committee returned my case to an earlier step</button>
-      </div>
-    </div>
+  <div class="draft-bar draft-bar-incident" id="idraft-bar">
+    <div class="draft-dot"></div>
+    <span>Building your incident report — everything stays in your browser only</span>
   </div>
 
-  <!-- Screen 4 wait -->
-  <div class="step-card" id="screen-4-wait">
-    <div class="step-card-header">
-      <div class="step-num">4</div>
-      <div><h2>Returned to Earlier Step</h2><p>The Committee needs more done at the Director level</p></div>
-    </div>
-    <div class="step-body">
-      <div class="alert alert-warn">
-        <span class="alert-icon">↩️</span>
-        <div>The Complaint Committee has determined that more effort can reasonably be made at the <strong>staff or Director level</strong>. Your complaint has been returned for further attempts.</div>
-      </div>
-      <ul class="checklist">
-        <li>Follow the Committee's specific guidance on what additional steps to take.</li>
-        <li>Re-engage with the Director and document all new efforts.</li>
-        <li>If still unresolved, re-submit your written report with updated documentation.</li>
-      </ul>
-      <div class="btn-group">
-        <button class="btn btn-gold" onclick="go('screen-4')">↩ Return to Step Four when ready</button>
-      </div>
-    </div>
-  </div>
+  <main>
 
-  <!-- ================================================ -->
-  <!-- SCREEN 5: Board Report -->
-  <!-- ================================================ -->
-  <div class="step-card" id="screen-5">
-    <div class="step-card-header">
-      <div class="step-num">5</div>
-      <div><h2>Step Five: Board Report &amp; Final Decision</h2><p>The final stage of the internal process</p></div>
-    </div>
-    <div class="step-body">
-      <div class="guidance">
-        After issuing its final report, the Complaint Committee presents an <strong>executive summary</strong> to the full Board of Trustees. The Board may vote on any policy or action items arising from the Committee's conclusions.
+    <!-- Incident Form Card -->
+    <div class="step-card active incident-focus" id="is-form">
+      <div class="card-header card-header-incident">
+        <div class="step-num step-num-incident">📋</div>
+        <div><h2>Community Incident Report</h2><p>Tell us what happened — we'll prepare your submission</p></div>
       </div>
-      <p class="question-text">Are you satisfied with the outcome of the Complaint Committee's process?</p>
-      <div class="btn-group">
-        <button class="btn btn-gold" onclick="go('screen-resolved')">✅ Yes — the complaint has been resolved</button>
-        <button class="btn btn-danger" onclick="go('screen-escalate')">❌ No — I am not satisfied with the outcome</button>
+      <div class="step-body">
+
+        <div class="guidance teal-guide">
+          This form helps you report a community incident to the school liaison. Complete each section as fully as possible — the more detail you provide, the more effectively the concern can be addressed.
+        </div>
+
+        <p class="fields-intro teal-intro">✏️ Your details and incident information will be used to generate a submission email and a PDF attachment you can send together.</p>
+
+        <!-- Your info -->
+        <div class="field-row">
+          <div class="field-group"><label>Your Full Name</label><input type="text" id="i-name" placeholder="e.g. Jane Smith" oninput="isave()"></div>
+          <div class="field-group"><label>Your Email Address</label><input type="email" id="i-email" placeholder="e.g. jane@email.com" oninput="isave()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><label>Your Role</label>
+            <select id="i-role" oninput="isave()">
+              <option value="">— Select your role —</option>
+              <option>Parent / Guardian</option>
+              <option>Student</option>
+              <option>Staff Member</option>
+              <option>Community Member</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field-group"><label>Date of Incident</label><input type="date" id="i-date" oninput="isave()"></div>
+        </div>
+
+        <!-- Category -->
+        <div class="field-group">
+          <label>Category of Incident</label>
+          <div class="field-hint">Select all that apply.</div>
+          <div class="category-grid" id="i-category-grid">
+            <span class="cat-chip" onclick="toggleCat(this)">Unprofessionalism</span>
+            <span class="cat-chip" onclick="toggleCat(this)">Lack of Response</span>
+            <span class="cat-chip" onclick="toggleCat(this)">Bullying</span>
+            <span class="cat-chip" onclick="toggleCat(this)">Micro-aggressions</span>
+            <span class="cat-chip" onclick="toggleCat(this)">Discrimination</span>
+            <span class="cat-chip" onclick="toggleCat(this)">Harassment</span>
+            <span class="cat-chip" onclick="toggleCat(this)">Safety Concern</span>
+            <span class="cat-chip" onclick="toggleCat(this)">Policy Violation</span>
+            <span class="cat-chip other-chip" onclick="toggleCat(this)">Other</span>
+          </div>
+        </div>
+        <div class="field-group" id="i-other-wrap" style="display:none;">
+          <label>Please describe the category</label>
+          <input type="text" id="i-other-cat" placeholder="e.g. Inappropriate communication" oninput="isave()">
+        </div>
+
+        <!-- Who was involved -->
+        <div class="field-group">
+          <label>Who was involved?</label>
+          <div class="field-hint">Names and roles of individuals involved (optional — leave blank if you prefer not to name anyone at this stage).</div>
+          <input type="text" id="i-involved" placeholder="e.g. A classroom teacher (Grade 3), another parent" oninput="isave()">
+        </div>
+
+        <!-- Where / context -->
+        <div class="field-group">
+          <label>Where did this occur?</label>
+          <input type="text" id="i-location" placeholder="e.g. School gymnasium, online communication, classroom" oninput="isave()">
+        </div>
+
+        <!-- Description -->
+        <div class="field-group">
+          <label>Description of the Incident</label>
+          <div class="field-hint">Describe what happened as clearly and factually as possible. Include the sequence of events, what was said or done, and how it affected you or others.</div>
+          <textarea id="i-description" rows="6" placeholder="e.g. On the morning of [date], during a parent meeting, [describe what happened]. I felt this was inappropriate because…" oninput="isave()"></textarea>
+        </div>
+
+        <!-- Desired outcome -->
+        <div class="field-group">
+          <label>Desired Outcome (optional)</label>
+          <div class="field-hint">What response or resolution are you hoping for?</div>
+          <textarea id="i-outcome" rows="3" placeholder="e.g. I would like an acknowledgement of the incident and for steps to be taken to prevent this from happening again…" oninput="isave()"></textarea>
+        </div>
+
+        <!-- Anonymous -->
+        <div class="field-group">
+          <label>Submission Preference</label>
+          <select id="i-anon" oninput="isave()">
+            <option value="named">Submit with my name included</option>
+            <option value="anon">Submit anonymously (your name will not appear in the report)</option>
+          </select>
+        </div>
+
+        <div class="btn-group" style="margin-top:8px;">
+          <button class="btn btn-teal" onclick="iGenerate()">✉️ Generate Email &amp; PDF</button>
+        </div>
+
+        <!-- Output -->
+        <div id="i-output" style="display:none;margin-top:32px;">
+
+          <div class="alert alert-teal" style="margin-bottom:20px;">
+            <span class="alert-icon">✅</span>
+            <div>Your incident report has been prepared. <strong>Download the PDF</strong> to attach to your email, then <strong>copy the email</strong> and send both together to <strong>mikeclowe@gmail.com</strong>.</div>
+          </div>
+
+          <!-- PDF button -->
+          <div class="pdf-action-row">
+            <strong style="font-size:13.5px;color:var(--teal);">Step 1 — Save your PDF attachment:</strong>
+            <button class="pdf-btn" id="i-pdf-btn" onclick="iDownloadPDF()">📄 Download Incident Report PDF</button>
+          </div>
+
+          <strong style="font-size:13.5px;color:var(--teal);display:block;margin-bottom:12px;">Step 2 — Copy and send this email:</strong>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <span style="font-size:13px;color:var(--text-muted);">Attach your downloaded PDF before sending.</span>
+            <button class="copy-btn" id="i-copy-btn" onclick="iCopyEmail()">📋 Copy to clipboard</button>
+          </div>
+
+          <div class="email-preview">
+            <div class="email-top email-top-incident"><span>To: </span><strong>mikeclowe@gmail.com</strong></div>
+            <div class="email-meta">
+              <div class="email-meta-row"><span class="lbl">From:</span><span id="i-em-from">—</span></div>
+              <div class="email-meta-row"><span class="lbl">Subject:</span><span id="i-em-subject">—</span></div>
+              <div class="email-meta-row"><span class="lbl">Date:</span><span id="i-em-date">—</span></div>
+            </div>
+            <div class="email-body-wrap"><div class="email-body" id="i-em-body"></div></div>
+          </div>
+
+          <div class="alert alert-warn"><span class="alert-icon">⚠️</span><div>Review the email before sending. <span style="background:#fff3cd;border:1px dashed #e6a817;border-radius:3px;padding:1px 5px;font-size:11.5px;font-style:italic;">Dashed yellow fields</span> indicate information that was left blank — you may fill them in before sending.</div></div>
+
+          <div class="btn-group">
+            <button class="btn btn-teal" onclick="iGo('is-submitted')">I have sent my report ✓</button>
+            <button class="btn btn-outline" onclick="iGenerate()">🔄 Regenerate</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ================================================ -->
-  <!-- SCREEN: ESCALATE -->
-  <!-- ================================================ -->
-  <div class="step-card" id="screen-escalate">
-    <div class="step-card-header">
-      <div class="step-num">!</div>
-      <div><h2>External Escalation: Commissioner of Education</h2><p>Beyond the school's internal process</p></div>
+    <!-- Submitted outcome -->
+    <div class="outcome-card outcome-incident" id="is-submitted">
+      <div class="outcome-icon">📬</div>
+      <h3>Report Submitted</h3>
+      <p>Thank you for submitting your incident report. Your concern has been prepared and sent for review. You should receive a response in due course.</p>
+      <div class="restart-wrap"><button class="restart-btn" onclick="iRestart()">Submit another report</button></div>
     </div>
-    <div class="step-body">
-      <div class="alert alert-info">
-        <span class="alert-icon">🏛️</span>
-        <div>If the Complaint Committee has not adequately addressed your complaint, you have the right to submit it in writing to the <strong>Commissioner of Education</strong>.</div>
-      </div>
-      <ul class="checklist">
-        <li>Submit your complaint in writing to the Massachusetts Commissioner of Education.</li>
-        <li>Include all documentation from the internal process (Steps 1–5).</li>
-        <li>Reference <strong>M.G.L. c. 71 section 89</strong> and <strong>603 CMR 1.00</strong>.</li>
-        <li>You may request copies of these laws from River Valley Charter School.</li>
-      </ul>
-      <div class="alert alert-warn">
-        <span class="alert-icon">📄</span>
-        <div>Contact River Valley Charter School to request a copy of the relevant Massachusetts Charter School laws to include in your external submission.</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ================================================ -->
-  <!-- OUTCOME: RESOLVED -->
-  <!-- ================================================ -->
-  <div class="outcome-card outcome-go" id="screen-resolved">
-    <div class="outcome-icon">🎉</div>
-    <h3>Complaint Resolved</h3>
-    <p>We're glad your complaint has been resolved. The RVCS Complaint Policy is designed to find solutions that work for the whole school community. No further action is needed.</p>
-    <div class="restart-wrap">
-      <button class="restart-btn" onclick="restart()">Start over for a new complaint</button>
-    </div>
-  </div>
+  </main>
+</div><!-- /page-incident -->
 
-  <div class="restart-wrap" id="main-restart" style="display:none;">
-    <button class="restart-btn" onclick="restart()">← Start over</button>
-  </div>
 
-</main>
-
+<!-- ════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
 <footer>
   River Valley Charter School &bull;
   <a href="https://irp.cdn-website.com/b7ac302e/files/uploaded/Complaint_Policy_V2_For_Approval_May_2015.pdf" target="_blank" rel="noopener">Complaint Policy (Revised May 2015) ↗</a>
@@ -694,190 +787,428 @@
   🔒 This page does not store or transmit any information. All data entered stays in your browser only.
 </footer>
 
+
 <script>
-  const TOTAL_STEPS = 6;
-  const stepProgress = {
-    'screen-0': 0, 'screen-employee': 1,
-    'screen-1': 1, 'screen-1-action': 1, 'screen-1b': 1,
-    'screen-2': 2, 'screen-2-action': 2, 'screen-2b': 2,
-    'screen-3': 3, 'screen-4': 4, 'screen-4-wait': 4,
-    'screen-5': 5, 'screen-escalate': 6, 'screen-resolved': 6,
-  };
-  const outcomeScreens = ['screen-resolved', 'screen-escalate'];
-  const data = {};
+// ═══════════════════════════════════════════════
+// ROUTING — read URL hash/path on load
+// ═══════════════════════════════════════════════
+function getInitialTab() {
+  const path = window.location.pathname;
+  const hash = window.location.hash;
+  if (path.endsWith('/incident') || path.endsWith('/incident.html') || hash === '#incident') return 'incident';
+  return 'complaint';
+}
 
-  function save() {
-    ['f-yourname','f-youremail','f-studentname','f-grade',
-     'f-s1-who','f-s1-date','f-s1-discussed','f-s1-outcome',
-     'f-s2-date','f-s2-dates-extra','f-s2-plan','f-s2-why',
-     'f-complaint','f-resolution'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) data[id] = el.value;
-    });
-    if ((data['f-yourname'] || '').trim() || (data['f-studentname'] || '').trim()) {
-      document.getElementById('draft-bar').classList.add('visible');
-    }
-  }
+function switchTab(tab) {
+  document.getElementById('page-complaint').classList.toggle('active', tab === 'complaint');
+  document.getElementById('page-incident').classList.toggle('active',  tab === 'incident');
+  document.getElementById('tab-complaint').className = 'tab-btn' + (tab === 'complaint' ? ' active-complaint' : '');
+  document.getElementById('tab-incident').className  = 'tab-btn' + (tab === 'incident'  ? ' active-incident'  : '');
+  history.replaceState(null, '', tab === 'incident' ? '#incident' : '#complaint');
+}
 
-  function setCategory(cat) { data.category = cat; }
 
-  function v(id, fallback) {
-    return (data[id] || '').trim() || fallback;
-  }
+// ═══════════════════════════════════════════════
+// COMPLAINT — state & helpers
+// ═══════════════════════════════════════════════
+const cData = {};
+const C_TOTAL = 6;
+const cProgress = {
+  'cs-0':0,'cs-emp':1,'cs-1':1,'cs-1-stop':1,'cs-1b':1,
+  'cs-2':2,'cs-2-stop':2,'cs-2b':2,
+  'cs-3':3,'cs-4':4,'cs-4-wait':4,'cs-5':5,
+  'cs-escalate':6,'cs-resolved':6
+};
 
-  function fmtDate(id, fallback) {
-    const raw = (data[id] || '').trim();
-    if (!raw) return fallback;
-    const d = new Date(raw + 'T12:00:00');
-    return isNaN(d) ? raw : d.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  }
+function csave() {
+  ['c-name','c-email','c-student','c-grade',
+   'c-s1-who','c-s1-date','c-s1-discussed','c-s1-outcome',
+   'c-s2-date','c-s2-extra','c-s2-plan','c-s2-why',
+   'c-complaint','c-resolution'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) cData[id] = el.value;
+  });
+  if ((cData['c-name']||'').trim() || (cData['c-student']||'').trim())
+    document.getElementById('cdraft-bar').classList.add('visible');
+}
+function cSetCat(c) { cData.cat = c; }
+function cv(id, fb) { return (cData[id]||'').trim() || fb; }
+function cfmtDate(id, fb) {
+  const raw = (cData[id]||'').trim();
+  if (!raw) return fb;
+  const d = new Date(raw+'T12:00:00');
+  return isNaN(d) ? raw : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
+function todayStr() {
+  return new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
 
-  function today() {
-    return new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  }
+function cGo(id) {
+  document.querySelectorAll('#page-complaint .step-card, #page-complaint .outcome-card')
+    .forEach(el => el.classList.remove('active'));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  const rw = document.getElementById('c-restart-wrap');
+  rw.style.display = (id==='cs-escalate') ? 'block' : 'none';
+  const step = cProgress[id] ?? 0;
+  document.getElementById('c-prog-bar').style.width = Math.round(step/C_TOTAL*100)+'%';
+  document.getElementById('c-prog-label').textContent =
+    step===0 ? 'Getting started' : step>=C_TOTAL ? 'Process complete' : `Step ${step} of ${C_TOTAL-1}`;
+}
 
-  function generateEmail() {
-    save();
-    const yourName    = v('f-yourname',       '[Your Full Name]');
-    const yourEmail   = v('f-youremail',       '[Your Email Address]');
-    const studentName = v('f-studentname',     '[Student Name]');
-    const grade       = v('f-grade',           '[Grade/Class]');
-    const s1Who       = v('f-s1-who',          '[Name and title of person contacted in Step One]');
-    const s1Date      = fmtDate('f-s1-date',   '[Date of Step One conversation]');
-    const s1Discussed = v('f-s1-discussed',    '[Description of what was discussed in Step One]');
-    const s1Outcome   = v('f-s1-outcome',      '[Outcome of Step One conversation]');
-    const s2Date      = fmtDate('f-s2-date',   '[Date of meeting with Director]');
-    const s2Extra     = v('f-s2-dates-extra',  '');
-    const s2Plan      = v('f-s2-plan',         '[Description of resolution plan agreed with Director]');
-    const s2Why       = v('f-s2-why',          '[Explanation of why the complaint remains unresolved after Step Two]');
-    const complaint   = v('f-complaint',       '[Detailed description of the complaint, including dates and individuals involved]');
-    const resolution  = v('f-resolution',      '[Specific outcome that would resolve this complaint]');
-
-    const s2DateStr = s2Extra ? `${s2Date} (and additionally on ${s2Extra})` : s2Date;
-    const subject   = `Formal Complaint Submission — ${studentName}, ${grade} — ${today()}`;
-
-    const body =
+function cGenEmail() {
+  csave();
+  const name    = cv('c-name',    '[Your Full Name]');
+  const email   = cv('c-email',   '[Your Email]');
+  const student = cv('c-student', '[Student Name]');
+  const grade   = cv('c-grade',   '[Grade/Class]');
+  const s1who   = cv('c-s1-who',  '[Name and title of person contacted]');
+  const s1date  = cfmtDate('c-s1-date',  '[Date of Step One conversation]');
+  const s1disc  = cv('c-s1-discussed',   '[What was discussed]');
+  const s1out   = cv('c-s1-outcome',     '[Outcome of Step One]');
+  const s2date  = cfmtDate('c-s2-date',  '[Date of meeting with Director]');
+  const s2extra = cv('c-s2-extra','');
+  const s2plan  = cv('c-s2-plan', '[Resolution plan agreed with Director]');
+  const s2why   = cv('c-s2-why',  '[Why complaint remains unresolved]');
+  const comp    = cv('c-complaint','[Detailed description of the complaint]');
+  const res     = cv('c-resolution','[Specific requested resolution]');
+  const s2str   = s2extra ? `${s2date} (and additionally on ${s2extra})` : s2date;
+  const subject = `Formal Complaint Submission — ${student}, ${grade} — ${todayStr()}`;
+  const body =
 `Dear Chair of the Board of Trustees,
 
 I am writing to formally submit a complaint pursuant to the River Valley Charter School Complaint Policy (Revised May 2015), and to respectfully request that this matter be reviewed by the Complaint Committee of the Board of Trustees.
 
-My name is ${yourName}, and I am the parent/guardian of ${studentName} (${grade}). My contact email is ${yourEmail}.
+My name is ${name}, and I am the parent/guardian of ${student} (${grade}). My contact email is ${email}.
 
 ─────────────────────────────────────────
 NATURE OF COMPLAINT
 ─────────────────────────────────────────
-${complaint}
+${comp}
 
 ─────────────────────────────────────────
-STEP ONE: DIRECT CONTACT (Policy Requirement)
+STEP ONE: DIRECT CONTACT
 ─────────────────────────────────────────
-In accordance with Step One of the Complaint Policy, I contacted ${s1Who} directly on ${s1Date}.
+I contacted ${s1who} directly on ${s1date}.
 
-Summary of discussion:
-${s1Discussed}
+Discussion: ${s1disc}
 
-Outcome:
-${s1Outcome}
+Outcome: ${s1out}
 
-As this did not lead to a satisfactory resolution, I proceeded to Step Two of the process.
+As this did not lead to a satisfactory resolution, I proceeded to Step Two.
 
 ─────────────────────────────────────────
-STEP TWO: SCHOOL DIRECTOR (Policy Requirement)
+STEP TWO: SCHOOL DIRECTOR
 ─────────────────────────────────────────
-In accordance with Step Two of the Complaint Policy, I met with the School Director on ${s2DateStr}.
+I met with the School Director on ${s2str}.
 
-Resolution plan discussed:
-${s2Plan}
+Resolution plan discussed: ${s2plan}
 
-Reason the complaint remains unresolved:
-${s2Why}
+Reason complaint remains unresolved: ${s2why}
 
-Having allowed a reasonable amount of time for the Director to bring a solution to bear, I have been unable to achieve a satisfactory resolution. I am therefore requesting that the Complaint Committee formally review this matter.
+Having allowed reasonable time for the Director to act, I am now requesting formal Complaint Committee review.
 
 ─────────────────────────────────────────
 RESOLUTION REQUESTED
 ─────────────────────────────────────────
-${resolution}
+${res}
 
 ─────────────────────────────────────────
+I understand all named parties will receive a copy of this report. I am prepared to attend Committee meetings and cooperate fully.
 
-I understand that all parties named in this complaint will receive a copy of this report. I am prepared to attend any meetings arranged by the Complaint Committee and to cooperate fully with the review process.
+Respectfully,
 
-I appreciate the Committee's time and look forward to receiving an initial response within 10 days, as outlined in the Complaint Policy.
+${name}
+${email}
+${todayStr()}`;
 
-Respectfully submitted,
+  document.getElementById('c-em-from').textContent    = `${name} <${email}>`;
+  document.getElementById('c-em-subject').textContent = subject;
+  document.getElementById('c-em-date').textContent    = todayStr();
+  const escaped  = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  document.getElementById('c-em-body').innerHTML =
+    escaped.replace(/\[([^\]]+)\]/g,'<span class="placeholder">[$1]</span>');
+  cData._subject = subject;
+  cData._body    = body;
+  const out = document.getElementById('c-email-out');
+  out.style.display = 'block';
+  setTimeout(()=>out.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  const cb = document.getElementById('c-copy-btn');
+  cb.innerHTML = '📋 Copy to clipboard'; cb.classList.remove('copied');
+}
 
-${yourName}
-${yourEmail}
-${today()}`;
+function cCopyEmail() {
+  const full = `Subject: ${cData._subject||''}\n\n${cData._body||''}`;
+  navigator.clipboard.writeText(full).then(()=>{
+    const cb = document.getElementById('c-copy-btn');
+    cb.innerHTML='✅ Copied!'; cb.classList.add('copied');
+    setTimeout(()=>{ cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied'); },2500);
+  }).catch(()=>alert('Could not copy automatically — please select and copy the email text manually.'));
+}
 
-    // Populate preview
-    document.getElementById('em-from').textContent    = `${yourName} <${yourEmail}>`;
-    document.getElementById('em-subject').textContent = subject;
-    document.getElementById('em-date').textContent    = today();
+function cRestart() {
+  document.querySelectorAll('#page-complaint input,#page-complaint textarea,#page-complaint select')
+    .forEach(el=>el.value='');
+  Object.keys(cData).forEach(k=>delete cData[k]);
+  document.getElementById('cdraft-bar').classList.remove('visible');
+  document.getElementById('c-email-out').style.display='none';
+  cGo('cs-0');
+}
 
-    // Highlight unfilled placeholders
-    const bodyEl   = document.getElementById('em-body');
-    const escaped  = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const hilit    = escaped.replace(/\[([^\]]+)\]/g, '<span class="placeholder">[$1]</span>');
-    bodyEl.innerHTML = hilit;
 
-    // Store for clipboard
-    data._emailSubject = subject;
-    data._emailBody    = body;
+// ═══════════════════════════════════════════════
+// INCIDENT — state & helpers
+// ═══════════════════════════════════════════════
+const iData = {};
 
-    const out = document.getElementById('email-output');
-    out.style.display = 'block';
-    setTimeout(() => out.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+function isave() {
+  ['i-name','i-email','i-role','i-date','i-other-cat',
+   'i-involved','i-location','i-description','i-outcome','i-anon'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) iData[id] = el.value;
+  });
+  iData.categories = getSelectedCats();
+  if ((iData['i-name']||'').trim() || (iData['i-description']||'').trim())
+    document.getElementById('idraft-bar').classList.add('visible');
+}
 
-    const cb = document.getElementById('copy-btn');
-    cb.innerHTML = '📋 Copy to clipboard';
-    cb.classList.remove('copied');
-  }
+function toggleCat(el) {
+  el.classList.toggle('selected');
+  const otherWrap = document.getElementById('i-other-wrap');
+  const anyOther = document.querySelector('.other-chip.selected');
+  otherWrap.style.display = anyOther ? 'block' : 'none';
+  isave();
+}
 
-  function copyEmail() {
-    const full = `Subject: ${data._emailSubject || ''}\n\n${data._emailBody || ''}`;
-    navigator.clipboard.writeText(full).then(() => {
-      const cb = document.getElementById('copy-btn');
-      cb.innerHTML = '✅ Copied!';
-      cb.classList.add('copied');
-      setTimeout(() => { cb.innerHTML = '📋 Copy to clipboard'; cb.classList.remove('copied'); }, 2500);
-    }).catch(() => {
-      alert('Could not copy automatically — please select and copy the email text manually.');
-    });
-  }
-
-  function go(id) {
-    document.querySelectorAll('.step-card, .outcome-card').forEach(el => el.classList.remove('active'));
-    const target = document.getElementById(id);
-    if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-    const restartEl = document.getElementById('main-restart');
-    if (id === 'screen-resolved') {
-      restartEl.style.display = 'none';
-    } else if (outcomeScreens.includes(id)) {
-      restartEl.style.display = 'block';
+function getSelectedCats() {
+  const chips = document.querySelectorAll('#i-category-grid .cat-chip.selected');
+  const cats = [];
+  chips.forEach(c => {
+    if (c.classList.contains('other-chip')) {
+      const oc = (document.getElementById('i-other-cat').value||'').trim();
+      cats.push(oc || 'Other');
     } else {
-      restartEl.style.display = 'none';
+      cats.push(c.textContent.trim());
     }
+  });
+  return cats;
+}
 
-    const step = stepProgress[id] ?? 0;
-    document.getElementById('progressBar').style.width = Math.round((step / TOTAL_STEPS) * 100) + '%';
-    document.getElementById('progressLabel').textContent =
-      step === 0 ? 'Getting started' :
-      step >= TOTAL_STEPS ? 'Process complete' :
-      `Step ${step} of ${TOTAL_STEPS - 1}`;
+function iv(id, fb) { return (iData[id]||'').trim() || fb; }
+function ifmtDate(id, fb) {
+  const raw = (iData[id]||'').trim();
+  if (!raw) return fb;
+  const d = new Date(raw+'T12:00:00');
+  return isNaN(d) ? raw : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
+
+function iGo(id) {
+  document.querySelectorAll('#page-incident .step-card, #page-incident .outcome-card')
+    .forEach(el=>el.classList.remove('active'));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function iGenerate() {
+  isave();
+  const name    = iv('i-name',   '[Your Name]');
+  const email   = iv('i-email',  '[Your Email]');
+  const role    = iv('i-role',   '[Your Role]');
+  const date    = ifmtDate('i-date', '[Date of Incident]');
+  const cats    = iData.categories && iData.categories.length ? iData.categories.join(', ') : '[Category not selected]';
+  const involv  = iv('i-involved',    'Not specified');
+  const loc     = iv('i-location',    'Not specified');
+  const desc    = iv('i-description', '[Description of the incident]');
+  const outcome = iv('i-outcome',     'No specific outcome requested.');
+  const isAnon  = (iData['i-anon']||'') === 'anon';
+  const displayName = isAnon ? 'Anonymous' : name;
+  const displayEmail = isAnon ? '(withheld)' : email;
+  const subject = `Community Incident Report — ${cats} — ${todayStr()}`;
+
+  const body =
+`Dear Community Liaison,
+
+Please find attached a community incident report submitted via the RVCS Community Portal.
+
+SUBMITTED BY: ${displayName}
+CONTACT: ${displayEmail}
+ROLE: ${role}
+SUBMISSION DATE: ${todayStr()}
+
+Please refer to the attached PDF for the full incident report. A summary is provided below.
+
+─────────────────────────────────────────
+INCIDENT SUMMARY
+─────────────────────────────────────────
+Date of Incident: ${date}
+Category: ${cats}
+Location / Context: ${loc}
+Individuals Involved: ${involv}
+
+Description:
+${desc}
+
+Desired Outcome:
+${outcome}
+
+─────────────────────────────────────────
+${isAnon ? 'This report has been submitted anonymously at the submitter\'s request.' : `Submitted by ${name} (${email}) — ${role}`}
+${todayStr()}`;
+
+  document.getElementById('i-em-from').textContent    = `${displayName} <${displayEmail}>`;
+  document.getElementById('i-em-subject').textContent = subject;
+  document.getElementById('i-em-date').textContent    = todayStr();
+  const escaped = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  document.getElementById('i-em-body').innerHTML =
+    escaped.replace(/\[([^\]]+)\]/g,'<span class="placeholder">[$1]</span>');
+  iData._subject = subject;
+  iData._body    = body;
+  iData._pdfData = { name, email, role, date, cats, involv, loc, desc, outcome, isAnon, displayName, displayEmail };
+
+  const out = document.getElementById('i-output');
+  out.style.display = 'block';
+  setTimeout(()=>out.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  const cb = document.getElementById('i-copy-btn');
+  cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied');
+}
+
+function iCopyEmail() {
+  const full = `Subject: ${iData._subject||''}\n\nTo: mikeclowe@gmail.com\n\n${iData._body||''}`;
+  navigator.clipboard.writeText(full).then(()=>{
+    const cb = document.getElementById('i-copy-btn');
+    cb.innerHTML='✅ Copied!'; cb.classList.add('copied');
+    setTimeout(()=>{ cb.innerHTML='📋 Copy to clipboard'; cb.classList.remove('copied'); },2500);
+  }).catch(()=>alert('Could not copy automatically — please select and copy the email text manually.'));
+}
+
+function iDownloadPDF() {
+  const d = iData._pdfData;
+  if (!d) { alert('Please generate the report first.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'letter' });
+
+  const W = doc.internal.pageSize.getWidth();
+  const margin = 56;
+  const contentW = W - margin * 2;
+  let y = 60;
+
+  // Header bar
+  doc.setFillColor(26, 39, 68); // navy
+  doc.rect(0, 0, W, 48, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(15);
+  doc.text('River Valley Charter School', margin, 28);
+  doc.setFontSize(10);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(201,168,76);
+  doc.text('COMMUNITY INCIDENT REPORT', margin, 42);
+
+  // Confidentiality note
+  y = 68;
+  doc.setFillColor(230, 244, 244);
+  doc.roundedRect(margin, y, contentW, 28, 4, 4, 'F');
+  doc.setTextColor(26,107,107);
+  doc.setFontSize(9);
+  doc.setFont('helvetica','italic');
+  doc.text('This document is confidential and intended solely for the named recipient.', margin+10, y+18);
+
+  y += 44;
+
+  // Title
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(26,39,68);
+  doc.text('Incident Report', margin, y);
+  y += 6;
+  doc.setDrawColor(201,168,76);
+  doc.setLineWidth(2);
+  doc.line(margin, y, margin+120, y);
+  y += 20;
+
+  // Meta info table
+  const metaRows = [
+    ['Submission Date', todayStr()],
+    ['Submitted By', d.isAnon ? 'Anonymous' : d.displayName],
+    ['Contact', d.isAnon ? '(withheld)' : d.displayEmail],
+    ['Role', d.role || 'Not specified'],
+    ['Date of Incident', d.date],
+    ['Category', d.cats],
+    ['Location / Context', d.loc],
+    ['Individuals Involved', d.involv],
+  ];
+
+  doc.setFontSize(9.5);
+  metaRows.forEach(([label, val], i) => {
+    const rowY = y + i * 20;
+    if (i % 2 === 0) {
+      doc.setFillColor(248, 245, 238);
+      doc.rect(margin, rowY - 13, contentW, 20, 'F');
+    }
+    doc.setFont('helvetica','bold'); doc.setTextColor(26,39,68);
+    doc.text(label + ':', margin+8, rowY);
+    doc.setFont('helvetica','normal'); doc.setTextColor(42,42,42);
+    const lines = doc.splitTextToSize(val||'Not specified', contentW-130);
+    doc.text(lines, margin+160, rowY);
+  });
+  y += metaRows.length * 20 + 14;
+
+  // Section: Description
+  function section(title, content, currentY) {
+    if (currentY > 660) { doc.addPage(); currentY = 56; }
+    // Section header
+    doc.setFillColor(26,39,68);
+    doc.rect(margin, currentY, contentW, 22, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(255,255,255);
+    doc.text(title, margin+8, currentY+15);
+    currentY += 30;
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(42,42,42);
+    const lines = doc.splitTextToSize(content || 'Not provided.', contentW-8);
+    lines.forEach(line => {
+      if (currentY > 700) { doc.addPage(); currentY = 56; }
+      doc.text(line, margin+4, currentY);
+      currentY += 15;
+    });
+    return currentY + 10;
   }
 
-  function restart() {
-    document.querySelectorAll('input, textarea, select').forEach(el => el.value = '');
-    Object.keys(data).forEach(k => delete data[k]);
-    document.getElementById('draft-bar').classList.remove('visible');
-    document.getElementById('email-output').style.display = 'none';
-    go('screen-0');
+  y = section('Description of the Incident', d.desc, y);
+  y = section('Desired Outcome', d.outcome, y);
+
+  // Footer
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++) {
+    doc.setPage(p);
+    doc.setFontSize(8); doc.setTextColor(150,150,150);
+    doc.setFont('helvetica','normal');
+    doc.text(`River Valley Charter School — Community Incident Report — Generated ${todayStr()}`, margin, 750);
+    doc.text(`Page ${p} of ${pageCount}`, W - margin, 750, {align:'right'});
   }
 
-  go('screen-0');
+  doc.save(`RVCS_Incident_Report_${todayStr().replace(/,?\s/g,'_')}.pdf`);
+
+  const btn = document.getElementById('i-pdf-btn');
+  btn.innerHTML = '✅ PDF Downloaded';
+  setTimeout(()=>{ btn.innerHTML='📄 Download Incident Report PDF'; },3000);
+}
+
+function iRestart() {
+  document.querySelectorAll('#page-incident input,#page-incident textarea,#page-incident select')
+    .forEach(el=>el.value='');
+  document.querySelectorAll('#i-category-grid .cat-chip').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('i-other-wrap').style.display='none';
+  Object.keys(iData).forEach(k=>delete iData[k]);
+  document.getElementById('idraft-bar').classList.remove('visible');
+  document.getElementById('i-output').style.display='none';
+  iGo('is-form');
+}
+
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+switchTab(getInitialTab());
+cGo('cs-0');
 </script>
 </body>
 </html>
