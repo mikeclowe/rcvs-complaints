@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RVCS Community Portal</title>
+<title>RVCS Parent Community Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -305,9 +305,9 @@ footer a:hover { color: var(--gold); }
 ════════════════════════════════════════════════ -->
 <header>
   <div class="header-inner">
-    <div class="header-badge">Community Portal</div>
+    <div class="header-badge">Parent Community Guide</div>
     <h1>River Valley Charter School</h1>
-    <p class="subtitle">Official complaint and incident reporting guides</p>
+    <p class="subtitle">A parent-run resource for navigating complaints and reporting incidents</p>
     <div class="tab-bar">
       <button class="tab-btn" id="tab-complaint" onclick="switchTab('complaint')">📋 Complaint Process</button>
       <button class="tab-btn" id="tab-incident"  onclick="switchTab('incident')">🚨 Report an Incident</button>
@@ -321,7 +321,7 @@ footer a:hover { color: var(--gold); }
 ════════════════════════════════════════════════ -->
 <div class="page-panel" id="page-complaint">
 
-  <div class="subband subband-complaint">Based on <strong>RVCS Complaint Policy (Revised May 2015)</strong> — complaints should be resolved as close to their source as possible.</div>
+  <div class="subband subband-complaint">This is an independent parent-run guide to help you navigate the RVCS complaint process — it is not affiliated with or endorsed by the school.</div>
 
   <div class="privacy-notice">
     🔒 <strong>Your privacy is protected.</strong> This page does not collect, store, or transmit any information. Everything stays in your browser and is cleared when you close or refresh the page.
@@ -346,7 +346,7 @@ footer a:hover { color: var(--gold); }
       </div>
       <div class="step-body">
         <div class="guidance">
-          The RVCS Complaint Policy requires all complaints be <strong>resolved as close to their source as possible</strong>. You must attempt direct resolution before escalating. This guide walks you through each required step and builds your formal submission along the way.
+          The RVCS Complaint Policy requires all complaints be <strong>resolved as close to their source as possible</strong>. You must attempt direct resolution before escalating. This guide, put together by parents, walks you through each step and helps you build your formal submission along the way.
         </div>
         <p class="fields-intro">✏️ We'll collect details as you go to draft your formal written complaint. Start by telling us about yourself.</p>
         <div class="field-row">
@@ -599,7 +599,7 @@ footer a:hover { color: var(--gold); }
     <div class="outcome-card outcome-complaint" id="cs-resolved">
       <div class="outcome-icon">🎉</div>
       <h3>Complaint Resolved</h3>
-      <p>We're glad your complaint has been resolved. The RVCS Complaint Policy is designed to find solutions that work for the whole school community.</p>
+      <p>We're glad your complaint has been resolved. We hope this guide made the process a little easier to navigate.</p>
       <div class="restart-wrap"><button class="restart-btn" onclick="cRestart()">Start over for a new complaint</button></div>
     </div>
 
@@ -616,7 +616,7 @@ footer a:hover { color: var(--gold); }
 ════════════════════════════════════════════════ -->
 <div class="page-panel" id="page-incident">
 
-  <div class="subband subband-incident">Use this form to report a <strong>community incident</strong> — your submission will be sent to the community liaison for review.</div>
+  <div class="subband subband-incident">This is an independent parent-run tool for documenting and sharing community incidents — it is not affiliated with or endorsed by the school.</div>
 
   <div class="privacy-notice teal-privacy">
     🔒 <strong>Your privacy is protected.</strong> This page does not collect, store, or transmit any information. Everything stays in your browser and is cleared when you close or refresh the page.
@@ -638,7 +638,7 @@ footer a:hover { color: var(--gold); }
       <div class="step-body">
 
         <div class="guidance teal-guide">
-          This form helps you report a community incident to the school liaison. Complete each section as fully as possible — the more detail you provide, the more effectively the concern can be addressed.
+          This form, created by parents, helps you document a community incident and prepare it for submission to the parent-run incident pool. Complete each section as fully as possible — the more detail you provide, the more effectively the concern can be tracked and raised.
         </div>
 
         <p class="fields-intro teal-intro">✏️ Your details and incident information will be used to generate a submission email and a PDF attachment you can send together.</p>
@@ -728,7 +728,9 @@ footer a:hover { color: var(--gold); }
 
           <div class="alert alert-teal" style="margin-bottom:20px;">
             <span class="alert-icon">✅</span>
-            <div>Your incident report has been prepared. <strong>Download the PDF</strong> to attach to your email, then <strong>copy the email</strong> and send both together to <strong>mikeclowe@gmail.com</strong>.</div>
+            <div>
+              Your incident report has been prepared. In order to show the number and magnitude of incidents, we are attempting to consolidate incidents across the school in a single place. If you would like to add your incident to the pool, please email both the text email and PDF to <strong>rvcsincidents@gmail.com</strong>.
+            </div>
           </div>
 
           <!-- PDF button -->
@@ -737,7 +739,7 @@ footer a:hover { color: var(--gold); }
             <button class="pdf-btn" id="i-pdf-btn" onclick="iDownloadPDF()">📄 Download Incident Report PDF</button>
           </div>
 
-          <strong style="font-size:13.5px;color:var(--teal);display:block;margin-bottom:12px;">Step 2 — Copy and send this email:</strong>
+          <strong style="font-size:13.5px;color:var(--teal);display:block;margin-bottom:12px;">Step 2 — Copy and send this email to <span style="text-decoration:underline;">rvcsincidents@gmail.com</span>:</strong>
 
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
             <span style="font-size:13px;color:var(--text-muted);">Attach your downloaded PDF before sending.</span>
@@ -745,7 +747,7 @@ footer a:hover { color: var(--gold); }
           </div>
 
           <div class="email-preview">
-            <div class="email-top email-top-incident"><span>To: </span><strong>mikeclowe@gmail.com</strong></div>
+            <div class="email-top email-top-incident"><span>To: </span><strong>rvcsincidents@gmail.com</strong></div>
             <div class="email-meta">
               <div class="email-meta-row"><span class="lbl">From:</span><span id="i-em-from">—</span></div>
               <div class="email-meta-row"><span class="lbl">Subject:</span><span id="i-em-subject">—</span></div>
@@ -780,15 +782,16 @@ footer a:hover { color: var(--gold); }
      FOOTER
 ════════════════════════════════════════════════ -->
 <footer>
-  River Valley Charter School &bull;
-  <a href="https://irp.cdn-website.com/b7ac302e/files/uploaded/Complaint_Policy_V2_For_Approval_May_2015.pdf" target="_blank" rel="noopener">Complaint Policy (Revised May 2015) ↗</a>
-  &bull; Based on M.G.L. c. 71 §89 &amp; 603 CMR 1.00
+  This is an independent parent community resource — not affiliated with or endorsed by River Valley Charter School.
+  <br>
+  Complaint process based on the <a href="https://irp.cdn-website.com/b7ac302e/files/uploaded/Complaint_Policy_V2_For_Approval_May_2015.pdf" target="_blank" rel="noopener">RVCS Complaint Policy (May 2015) ↗</a>
+  &bull; M.G.L. c. 71 §89 &amp; 603 CMR 1.00
   <br>
   🔒 This page does not store or transmit any information. All data entered stays in your browser only.
 </footer>
 
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════════════════════════════════════════════
 // ROUTING — read URL hash/path on load
 // ═══════════════════════════════════════════════
@@ -877,7 +880,7 @@ function cGenEmail() {
   const body =
 `Dear Chair of the Board of Trustees,
 
-I am writing to formally submit a complaint pursuant to the River Valley Charter School Complaint Policy (Revised May 2015), and to respectfully request that this matter be reviewed by the Complaint Committee of the Board of Trustees.
+I am writing to formally submit a complaint and to request that this matter be reviewed by the Complaint Committee of the Board of Trustees.
 
 My name is ${name}, and I am the parent/guardian of ${student} (${grade}). My contact email is ${email}.
 
@@ -1026,9 +1029,9 @@ function iGenerate() {
   const subject = `Community Incident Report — ${cats} — ${todayStr()}`;
 
   const body =
-`Dear Community Liaison,
+`Dear RVCS Incident Team,
 
-Please find attached a community incident report submitted via the RVCS Community Portal.
+Please find attached a community incident report submitted via the RVCS Parent Community Guide.
 
 SUBMITTED BY: ${displayName}
 CONTACT: ${displayEmail}
@@ -1073,7 +1076,7 @@ ${todayStr()}`;
 }
 
 function iCopyEmail() {
-  const full = `Subject: ${iData._subject||''}\n\nTo: mikeclowe@gmail.com\n\n${iData._body||''}`;
+  const full = `Subject: ${iData._subject||''}\n\nTo: rvcsincidents@gmail.com\n\n${iData._body||''}`;
   navigator.clipboard.writeText(full).then(()=>{
     const cb = document.getElementById('i-copy-btn');
     cb.innerHTML='✅ Copied!'; cb.classList.add('copied');
@@ -1203,10 +1206,23 @@ function iRestart() {
   iGo('is-form');
 }
 
+// === ROUTING ===
+function getInitialTab() {
+  const path = window.location.pathname;
+  const hash = window.location.hash;
+  if (path.endsWith('/incident') || path.endsWith('/incident.html') || hash === '#incident') return 'incident';
+  return 'complaint';
+}
 
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
+function switchTab(tab) {
+  document.getElementById('page-complaint').classList.toggle('active', tab === 'complaint');
+  document.getElementById('page-incident').classList.toggle('active',  tab === 'incident');
+  document.getElementById('tab-complaint').className = 'tab-btn' + (tab === 'complaint' ? ' active-complaint' : '');
+  document.getElementById('tab-incident').className  = 'tab-btn' + (tab === 'incident'  ? ' active-incident'  : '');
+  history.replaceState(null, '', tab === 'incident' ? '#incident' : '#complaint');
+}
+
+// === INIT ===
 switchTab(getInitialTab());
 cGo('cs-0');
 </script>
